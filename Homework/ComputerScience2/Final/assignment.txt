@@ -1,0 +1,25 @@
+1. Create an interface (usually found in .h header file) for a class called MyClass. It has one private
+integer member variable called x , a default constructor, a value pass constructor, a function to get a
+copy of x, and a function to change x.
+(20 points)
+
+
+2. Create the .cpp file (implementation) for the functions and constructor for the class MyClass from the
+above question. Note: there is no main() function in this cpp file.
+(20 points)
+
+
+3. Create the .cpp file with the main() function to use the above classes. Create a pointer variable of type
+Myclass by using the new keyword, use the functions you wrote above, and delete the pointer.
+(20 points)
+
+
+4. Create an array of characters to hold the string “sasazaki” and a second array of characters to hold the
+string “haruna”. Then create a function to interchange the two array contents, and call the function
+from main, and pass these two strings as parameters to the function.
+(20 points)
+
+
+5. Open a binary file from main(), and name the file “binary_output.txt”. Create an array of 10 decimal
+numbers and write this array to the binary file. Then read from the file. Copy the file contents into a
+second array.
