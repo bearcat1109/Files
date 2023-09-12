@@ -2,6 +2,7 @@
 #include "defineList.h"
 #include "defineNode.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -73,4 +74,18 @@ void List::listPrint()
       
     }
   cout << endl;
+}
+
+string List::listPrintString()
+{
+  string holder = "";
+  Node *currentNode = head;
+
+  while(currentNode->next)
+    {
+      holder += currentNode->next->hold + " ";
+      currentNode = currentNode->next;
+      
+    }
+  return holder;
 }
