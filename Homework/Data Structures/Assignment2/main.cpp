@@ -11,6 +11,11 @@ using namespace std;
 
 int main() {
   
+  // Initialize file output -
+  ofstream outFile;
+  outFile.open("output.txt");
+  outFile.close();
+
   // Greeting, size
   int vectSize = 50;
   // cout << "Welcome to Data Structures. How big should the array of random numbers be?" << endl;
@@ -21,14 +26,10 @@ int main() {
   static List intList;
 
   // Make vector, add to List, then store duplicates 
-  vector<int> dupes = *vecIntoList(berres, &intList);
+  vector<int> gabriel = *vecIntoList(berres, &intList);
 
   // Outputs (File & terminal)
-  terminalOutput(berres, dupes, intList);
-  fileOutput(berres, dupes, intList);
+  terminalOutput(berres, gabriel, intList);
+  fileOutput(berres, gabriel, intList);
 
-  ofstream outFile;
-  outFile.open("output.txt");
-  outFile << "test" << endl;
-  outFile.close();
 }
