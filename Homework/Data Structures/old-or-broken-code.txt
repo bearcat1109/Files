@@ -1,0 +1,24 @@
+public void printEmployeeArray(inputQueue[] Employees, double totalGross, double fedWithheld,
+                                   double stateWithheld, double socialWithheld, double medicWithheld)
+    {
+        for(inputQueue e : Employees)
+        {
+            System.out.println("Emp ID: " + e.id
+                                + "Emp Name: " + e.name
+                                + "Emp Title: " + e.title
+                                + "Emp Hours: " + e.hours
+                                + "Emp payrate: " + e.pay
+                                + "Emp Fed Tax Rate: " + e.fedTax + "%"
+                                + "Emp State Tax Rate: " + e.stateTax + "%"
+                                + "Emp Social Tax Rate: " + e.socialTax + "%"
+                                + "Emp Fed Tax Rate: " + e.fedTax + "%"
+                                + "Emp Medicare Tax Rate: " + e.medicTax + "%"
+            + "inputQueue Net Pay: " + (e.perGross - ((e.perGross*e.fedTax) + (e.perGross*e.stateTax) + (e.perGross*e.socialTax) + (e.perGross*e.medicTax)))
+                                + "Emp Net Pay: $" + e.netPay);
+            inputQueue.totalGross = (inputQueue.totalGross + e.perGross);
+            fedWithheld = (fedWithheld + e.perFed);
+            stateWithheld = (stateWithheld + e.perState);
+            socialWithheld = (socialWithheld + e.perSocial);
+            medicWithheld = (medicWithheld + e.perMedic);
+        }
+    }
