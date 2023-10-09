@@ -151,4 +151,19 @@ SELECT class
 FROM courses
 GROUP BY class HAVING COUNT(student) >= 5;
 
+-- 1729 Find Followers Count
+SELECT DISTINCT user_id, 
+       COUNT(*) followers_count
+FROM followers
+GROUP BY user_id
+ORDER BY user_id ASC;
 
+-- 619 Biggest Single Number
+SELECT MAX(num) num 
+FROM (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(num) = 1)
+
+-- 1045 Customers Who Bought All Products
+SELECT customer_id
+FROM customer 
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(*) FROM product);
