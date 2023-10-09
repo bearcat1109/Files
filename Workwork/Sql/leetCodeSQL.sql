@@ -137,3 +137,18 @@ SELECT TO_CHAR(activity_date, 'YYYY-MM-DD') AS day,
 FROM activity
 WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
 GROUP BY activity_date
+
+-- 1070 Product Sales Analysis III
+SELECT s.product_id,
+       s.year first_year,
+       s.quantity,
+       s.price
+FROM sales s JOIN (SELECT product_id, MIN(year) AS year from sales GROUP BY product_id) s2
+ON s.product_id = s2.product_id AND s.year = s2.year;
+
+-- 596 Classes more than 5 students
+SELECT class
+FROM courses
+GROUP BY class HAVING COUNT(student) >= 5;
+
+
