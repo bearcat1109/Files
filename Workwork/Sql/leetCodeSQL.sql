@@ -60,6 +60,25 @@ FROM delivery
 WHERE (customer_id, order_date) IN (SELECT customer_id, min(order_date)
 FROM delivery GROUP BY customer_id);
 
+-- 1193 Monthly Transactions I
+SELECT 
+    TO_CHAR(trans_date, 'YYYY-MM') AS month,
+    country AS,
+    COUNT(*) AS trans_count,
+    SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) AS approved_count,
+    SUM(amount) AS trans_total_amount,
+    SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount 
+FROM transactions
+GROUP BY TO_CHAR(trans_date, 'YYYY-MM'), country
+
+-- 1211 Query Qualities and Percentage
+SELECT DISTINCT 
+    query_name, 
+    ROUND(AVG((rating) / position), 2) AS quality,
+    ROUND(AVG(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100, 2)AS poor_query_percentage
+FROM queries
+GROUP BY query_name
+
 --1757 Recyclable and Low Fat Products
 SELECT product_id
 FROM Products 
