@@ -83,3 +83,38 @@ GROUP BY query_name
 SELECT product_id
 FROM Products 
 WHERE low_fats = 'Y' AND recyclable = 'Y';
+
+-- 1633 Percentage of Users Attended a Contest
+SELECT contest_id, ROUND(COUNT(r.contest_id) * 100 / (SELECT COUNT(*)
+FROM users), 2) percentage
+FROM register r GROUP BY contest_id
+ORDER BY percentage DESC, contest_id
+
+-- 1075 Project Employees I 
+SELECT project_id, ROUND(SUM(experience_years)/COUNT(*),2) AS average_years
+FROM project p JOIN employee e ON p.employee_id = e.employee_id
+GROUP BY project_id
+
+-- 1251 Average Selling Price
+SELECT p.product_id, IFNULL(round(SUM(p.price*u.units)/sum(u.units),2),0) as average_price
+FROM Prices p 
+LEFT JOIN UnitsSold u
+ON p.product_id = u.product_id AND 
+u.purchase_date BETWEEN p.Start_date and p.end_date
+GROUP BY p.product_id
+
+-- 620 Not Boring Movies
+SELECT id, movie, description, rating FROM cinema 
+WHERE description != 'boring' AND MOD(id, 2) = 1
+ORDER BY rating DESC;
+
+-- 1934 Confirmation Rate
+SELECT s.user_id, 
+ROUND(AVG(CASE WHEN (c.action = 'confirmed') THEN 1 ELSE 0 END), 2) AS confirmation_rate
+FROM signups s LEFT OUTER JOIN confirmations c ON s.user_id = c.user_id 
+GROUP BY s.user_id;
+
+-- 570 Managers with at Least Two Reports
+SELECT e1.name 
+FROM Employee e1 INNER JOIN (SELECT managerId FROM Employee GROUP BY managerId HAVING COUNT(managerId) >= 5) e2 ON e1.id = e2.managerId 
+
