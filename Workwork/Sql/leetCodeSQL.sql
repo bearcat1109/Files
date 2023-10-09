@@ -118,3 +118,22 @@ GROUP BY s.user_id;
 SELECT e1.name 
 FROM Employee e1 INNER JOIN (SELECT managerId FROM Employee GROUP BY managerId HAVING COUNT(managerId) >= 5) e2 ON e1.id = e2.managerId 
 
+-- 550 Game Play Analysis IV
+SELECT ROUND(COUNT(a2.player_id) / COUNT(a1.player_id), 2) AS fraction
+FROM Activity a1 LEFT OUTER JOIN Activity a2
+   ON a2.player_id = a1.player_id AND a2.event_date = a1.event_date + 1
+WHERE (a1.player_id, a1.event_date) IN (SELECT player_id, MIN(event_date)
+  FROM Activity GROUP BY player_id);
+
+-- 2356 Number of Unique Subjects Taught by Each Teacher
+SELECT teacher_id, 
+       COUNT(DISTINCT subject_id) cnt 
+FROM teacher
+GROUP BY teacher_id;
+
+-- 1141 User Activity for the Past 30 Days I 
+SELECT TO_CHAR(activity_date, 'YYYY-MM-DD') AS day,
+       COUNT(DISTINCT user_id) AS active_users
+FROM activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date
