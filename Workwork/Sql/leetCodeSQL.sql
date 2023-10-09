@@ -167,3 +167,31 @@ SELECT customer_id
 FROM customer 
 GROUP BY customer_id
 HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(*) FROM product);
+
+-- 185. Department Top Three Salaries
+-- with
+WITH t3salaries AS 
+    ( 
+    SELECT 
+        e.salary,
+        e.departmentId,
+        dense_rank() OVER (PARTITION BY e.departmentId ORDER BY e.salary DESC) AS rank
+    FROM employee e
+    )
+SELECT DISTINCT 
+        d.name AS department,
+        e.name AS employee,
+        e.salary AS salary
+FROM employee e
+        JOIN department d ON d.id = e.departmentid
+        JOIN t3salaries ON t3salaries.salary = e.salary
+            AND t3salaries.departmentId = e.departmentId
+            AND t3salaries.rank <= 3
+-- regular
+SELECT 
+    d.name AS department, 
+    e.name AS employee, 
+    e.salary AS salary 
+FROM Department d JOIN Employee e ON EMP.DepartmentId=DEPT.id 
+WHERE 3 > (SELECT COUNT(DISTINCT e2.salary)
+FROM Employee e2 WHERE e2.salary > e.salary AND e.departmentId = e2.departmentId)
