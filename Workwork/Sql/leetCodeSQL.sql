@@ -1,3 +1,16 @@
+
+-- 1378 Replace Employee ID with Unique Identifier
+SELECT unique_id, name FROM Employees LEFT OUTER JOIN EmployeeUNI USING (id)
+
+-- 197 Rising Temperature
+SELECT id FROM 
+(SELECT id, temperature, recordDate, 
+lag(recordDate) OVER (ORDER BY recordDate) as prevDate,
+lag(temperature) OVER (ORDER BY recordDate) as prevTemp 
+FROM weather)
+WHERE temperature>prevTemp and recordDate-prevDate = 1;
+
+
 -- 1280 Students and Examinations
 SELECT st.student_id, st.student_name, su.subject_name, COUNT(e.subject_name) AS attended_exams
 FROM students st CROSS JOIN subjects su LEFT OUTER JOIN Examinations e 
@@ -213,3 +226,5 @@ FROM
 GROUP BY e.employee_id, e.name
 ORDER BY employee_id
 ;
+
+-- 1789 Primary Department for Each Employee
