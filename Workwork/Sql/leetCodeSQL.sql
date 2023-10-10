@@ -195,3 +195,21 @@ SELECT
 FROM Department d JOIN Employee e ON EMP.DepartmentId=DEPT.id 
 WHERE 3 > (SELECT COUNT(DISTINCT e2.salary)
 FROM Employee e2 WHERE e2.salary > e.salary AND e.departmentId = e2.departmentId)
+
+-- 1045 Customers Who Bought All Products
+SELECT customer_id
+FROM customer 
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(*) FROM product);
+
+-- 1731  The Number of Employees who Report to Each Employee
+SELECT 
+    e.employee_id,
+    e.name,
+    COUNT(e2.employee_id) reports_count,
+    ROUND(AVG(e2.age)) average_age
+FROM 
+    employees e INNER JOIN employees e2 ON e.employee_id = e2.reports_to
+GROUP BY e.employee_id, e.name
+ORDER BY employee_id
+;
