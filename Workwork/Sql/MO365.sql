@@ -27,6 +27,8 @@ where
                                  'LDIEMPEX',
                                  pebempl_ecls_code) = 'N'
     and pebempl_empl_status <> 'T'
+    -- Extra filtering 11-2-2023, remove retirees
+    AND pebempl_ecls_code NOT IN ('90', '92', '99')
     
 UNION 
 (
@@ -97,10 +99,30 @@ inner join gobumap on
 inner join goremal on
     goremal_pidm = gobumap.gobumap_pidm
     and goremal_emal_code = 'NSU'
+JOIN sfbetrm ON
+    sfbetrm_pidm = gobtpac_pidm
 where
     spriden_change_ind is null
     and spriden_last_name not like '%DO%NOT%USE%'
     and spriden_entity_ind = 'P'
     and spriden_id like 'N%'
+    -- Added 11-2-2023, current term or last enrollment within 2 months
+    AND (sfbetrm_term_code IN
+        (
+            SELECT 
+                stvterm_code
+            FROM 
+                stvterm
+            WHERE
+                stvterm_code >= (
+                SELECT MAX(stvterm_code)
+                FROM 
+                    stvterm
+                WHERE 
+                    sysdate < stvterm_end_date
+                AND sysdate > stvterm_start_date
+                AND stvterm_code NOT LIKE '%9'))
+         OR sfbetrm_activity_date > sysdate - 60
+)
 )
 ;
