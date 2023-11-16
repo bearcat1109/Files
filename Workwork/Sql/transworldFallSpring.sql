@@ -297,8 +297,8 @@ SELECT
             'N'
     END                                                                    AS is_employee,
     CASE
-        WHEN saradap_term_code_entry = (SELECT MAX(saradap_term_code_entry) FROM saradap)
-            AND saradap_admt_code = '9A'
+        WHEN saradap_admt_code = '9A'
+            AND saradap_term_code_entry = (SELECT MAX(saradap_term_code_entry) FROM saradap)
         THEN
             'Y'
         ELSE
