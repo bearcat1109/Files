@@ -2,7 +2,7 @@
 -- GORVISA and LAST_TERM_CHARGED update 11-7-2023 Gabriel B, Jason T, Jonathan P
 -- pr_inactive_only, ma_inactive_only, bd_exists Update 11-14-2023 Jonathan Petruska, Gabriel Berres
 -- IS_CONCURRENT saradap update 11-16-2023 Gabriel Berres
-
+-- RE-removed LAST_TERM_CHARGED and replaced LAST_Attend_Term
 
 WITH w_spriden AS (
     SELECT
@@ -175,18 +175,23 @@ WITH w_spriden AS (
     OVER (PARTITION BY w_sfrstcr_pidm)  w_sfrstcr_max_term_code
     FROM
         w_sfrstcr
-), w_saradap AS
-(
+), w_saradap AS (
     SELECT DISTINCT
-        saradap_admt_code               w_saradap_admt_code,
-      MAX(saradap_term_code_entry)      w_saradap_term_code_entry
-    FROM 
-        saradap
-    WHERE 
-        --saradap_admt_code = '9A'
-        saradap_term_code_entry < 202420
-    GROUP BY
-        saradap_admt_code
+        s_saradap_pidm                                               w_saradap_pidm,
+        s_saradap_term_code_entry                                    w_saradap_term_code_entry,
+        MAX(saradap_appl_no)
+        OVER(PARTITION BY s_saradap_pidm, s_saradap_term_code_entry) w_saradap_appl_no
+    FROM
+             (
+            SELECT
+                saradap_pidm                    s_saradap_pidm,
+                MAX(saradap_term_code_entry)
+                OVER(PARTITION BY saradap_pidm) s_saradap_term_code_entry
+            FROM
+                saradap
+        ) s_saradap
+        JOIN saradap ON saradap_pidm = s_saradap_pidm
+                        AND saradap_term_code_entry = s_saradap_term_code_entry
 )
 SELECT DISTINCT
     CASE
@@ -196,7 +201,7 @@ SELECT DISTINCT
             spriden_first_name
     END                                                                    AS debtors_first_name,
     spriden_last_name                                                      AS debtors_last_name,
-    w_tbraccd_charge_max_term                                              AS last_term_with_charge,
+    w_sfrstcr_max_term_code                                                AS last_attend_term,
     nvl2(w_spraddr_pr.spraddr_pidm,
          upper(replace(w_spraddr_pr.spraddr_street_line1, '.', '')),
          nvl2(w_spraddr_ma.spraddr_pidm,
@@ -291,7 +296,7 @@ SELECT DISTINCT
             'Y'
         ELSE
             'N'
-    END bd_exists,          
+    END bd_exists,
     ''                                                                     AS date_of_debt,
     spbpers_ssn                                                            AS ssn,
     w_tbraccd.tbraccd_balance                                              AS ammount_due,
@@ -309,14 +314,21 @@ SELECT DISTINCT
             'N'
     END                                                                    AS is_employee,
     CASE
-        WHEN 
-            w_saradap_admt_code = '9A'
-                AND w_saradap_term_code_entry < 202420 --(Insert variable here)
+        WHEN
+            saradap_admt_code = '9A'
         THEN
             'Y'
         ELSE
             'N'
-    END                                                                    AS is_concurrent
+    END                                                                    AS is_concurrent,
+    CASE
+        WHEN 
+            w_tbraccd.tbraccd_balance < 50
+        THEN 
+            'Y'
+        ELSE
+            'N'
+    END                                                                    AS is_sub50
 FROM
     w_spriden
     LEFT JOIN w_spbpers ON spbpers_pidm = spriden_pidm
@@ -329,11 +341,12 @@ FROM
     LEFT JOIN w_sgbstdn ON sgbstdn_pidm = spriden_pidm
     LEFT JOIN w_sfrstcr_max ON w_sfrstcr_max_pidm = spriden_pidm
     LEFT JOIN w_tbraccd_charge ON w_tbraccd_charge_pidm = spriden_pidm
-    JOIN saradap ON saradap_pidm = spriden_pidm
-    JOIN w_saradap ON w_saradap_term_code_entry = saradap_term_code_entry
+    --JOIN saradap ON saradap_pidm = spriden_pidm
+    --JOIN w_saradap ON w_saradap_term_code_entry = saradap_term_code_entry
+    JOIN w_saradap ON w_saradap_pidm = spriden_pidm
+    JOIN saradap ON saradap_pidm = w_saradap_pidm
+                    AND saradap_term_code_entry = w_saradap_term_code_entry
 WHERE
-     w_sfrstcr_max_term_code < 202420
-      OR w_pebempl.pebempl_pidm IS NOT NULL
-      
-      --AND :main_btn_go <> 0
+    ( w_sfrstcr_max_term_code <> :main_sql_queryterms.stvterm_code
+      OR w_pebempl.pebempl_pidm IS NOT NULL )      
 ;
