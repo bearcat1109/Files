@@ -23,7 +23,7 @@ SELECT DISTINCT
     nvl(o_shrlgpa.shrlgpa_hours_earned, 0)                  OVERALL_EARNED_HOURS,
     to_char(round(nvl(o_shrlgpa.shrlgpa_gpa, 0.00),
                   2),'fm90D00')                             OVERALL_GPA,
-    nvl(n_shrlgpa.shrlgpa_hours_earned, 0)                  NSU_GPA,
+    nvl(n_shrlgpa.shrlgpa_hours_earned, 0)                  NSU_EARNED_HOURS,
     to_char(round(nvl(n_shrlgpa.shrlgpa_gpa, 0.00),
                   2),'fm90D00')                             NSU_GPA,
     shrtgpa_hours_earned                                    TERM_HOURS,
