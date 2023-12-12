@@ -155,6 +155,21 @@ w_sprtele AS (
         JOIN w_sfrstcr ON w_sfrstcr_term_code = stvterm_code
     WHERE 
         stvterm_code = w_sfrstcr_term_code
+),  n_stvterm AS
+(
+    SELECT DISTINCT 
+        stvterm_code        n_stvterm_code,
+        stvterm_end_date    n_stvterm_end_date
+    FROM
+        stvterm
+    WHERE
+        stvterm_code = 
+        (
+            SELECT MIN(stvterm_code)
+            FROM stvterm
+            WHERE stvterm_start_date > sysdate
+            AND stvterm_desc NOT LIKE 'CE%'
+        )
 )
 SELECT DISTINCT
     ''                                        AS prefix,
@@ -194,16 +209,7 @@ SELECT DISTINCT
             to_char(sysdate, 'YYYY-MM-DD"T"HH:MM:SS')
         END                                   AS circregistrationdate,
     '195680'                                  homebranch,
-    CASE
-        WHEN
-            sysdate > (SELECT w_stvterm_end_date FROM w_stvterm)
-        THEN
-            to_char((SELECT w_stvterm_end_date FROM w_stvterm), 'YYYY-MM-DD"T"HH:MM:SS')
-        WHEN 
-            sysdate < (SELECT w_stvterm_end_date FROM w_stvterm)
-        THEN
-            to_char(sysdate, 'YYYY-MM-DD"T"HH:MM:SS')
-        END                                   AS oclcexpirationdate,
+    to_char((SELECT n_stvterm_end_date FROM n_stvterm), 'YYYY-MM-DD"T"HH:MM:SS') oclcexpirationdate,
     (
         SELECT
             w_spraddr_street_line1
