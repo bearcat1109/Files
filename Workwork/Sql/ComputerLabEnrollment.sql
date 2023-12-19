@@ -31,7 +31,7 @@ WHERE
     ssrmeet_bldg_code
     || ' '
     || ssrmeet_room_code IN ( 'WEBB 207', 'WEBB 307', 'BT 126', 'BT 128', 'BT 129',
-                              'BT B8', 'SC 270', 'SC LL46', 'BAGLEY 327', 'SS 106',
+                              'BT B8', 'SC 270', 'SC LL046', 'BAGLEY 327', 'SS 106',
                               'FITCTR 205', 'WILSON G18', 'WILSON 415', 'BABT 129', 'BAED 113',
                               'BALA 118', 'BALA 130', 'BALB 106', 'BALB 110', 'BALA 230',
                               'BALA 234', 'NSM 209', 'SYNAR 205' )
