@@ -24,9 +24,23 @@ SELECT DISTINCT
             -- sgrsatt_stts_code = spec is special student, atts_code of post is post-grad
         THEN
             'Special Student'
-        WHEN
-            sgrsatt_atts_code IN ('POST', 'PGND')
-        THEN
+        WHEN EXISTS (
+            SELECT
+                s1.sgrsatt_atts_code
+            FROM
+                sgrsatt s1
+            WHERE
+                    s1.sgrsatt_term_code_eff = (
+                        SELECT
+                            MAX(s2.sgrsatt_term_code_eff)
+                        FROM
+                            sgrsatt s2
+                        WHERE
+                            s2.sgrsatt_pidm = s1.sgrsatt_pidm
+                    )
+                AND sgrsatt_atts_code IN ( 'POST', 'PGND' )
+                AND s1.sgrsatt_pidm = sfbetrm_pidm
+        ) THEN
             'Post-Grad'
         WHEN 
             sgbstdn_levl_code = 'UG' AND (SUM(shrtgpa_hours_earned) OVER (PARTITION BY shrtgpa_pidm)) < 30
@@ -80,4 +94,4 @@ WHERE
     sfbetrm_term_code = 202420
     AND sfbetrm_ests_code = 'EL'
 ORDER BY 
-    sfbetrm_pidm; 
+    sfbetrm_pidm;
