@@ -107,6 +107,19 @@ SELECT DISTINCT
         ''
     END 
                                             adp_advisor,
+    CASE
+        WHEN
+            athl_sgradvr.sgradvr_advr_pidm IS NOT NULL THEN
+    athl_spriden.spriden_last_name
+    || ', '
+    || athl_spriden.spriden_first_name
+    || ' '
+    || substr(athl_spriden.spriden_mi, 1, 1)
+    || '.'
+    ELSE
+        ''
+    END
+                                            athl_advisor,
     stvcoll_desc                            college,
     m1_stvmajr.stvmajr_desc                 first_major,
     c1_stvmajr.stvmajr_desc                 first_concentration,
