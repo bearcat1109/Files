@@ -20,6 +20,22 @@ WITH w_sgrsprt AS (
         sgrsprt
     WHERE
         sgrsprt_term_code = 202420 --:main_sql_queryterms.stvterm_code
+), w_sgradvr AS (
+    SELECT DISTINCT
+        sgradvr_pidm                    w_sgradvr_pidm,
+        MAX(sgradvr_term_code_eff)
+        OVER(PARTITION BY sgradvr_pidm) w_sgradvr_term_code_eff
+    FROM
+        sgradvr
+    WHERE
+        sgradvr_term_code_eff <= 202420
+), w_sorlcur AS (
+    SELECT DISTINCT
+        sorlcur_pidm                    w_sorlcur_pidm,
+        MAX(sorlcur_seqno)
+        OVER(PARTITION BY sorlcur_pidm) w_sorlcur_seqno
+    FROM
+        sorlcur
 )
 SELECT DISTINCT 
     sfbetrm_term_code           academic_period,
@@ -54,9 +70,9 @@ SELECT DISTINCT
             'Null'
     END                                       AS sport_status_desc1,
     spbpers_confid_ind                        confidential_ind,
-    spriden_id                                id,
-    spriden_last_name                         last_name,
-    spriden_first_name                        first_name,
+    s_spriden.spriden_id                              id,
+    s_spriden.spriden_last_name                       last_name,
+    s_spriden.spriden_first_name                      first_name,
     gobtpac_external_user || '@nsuok.edu'     email,
     CASE
         WHEN spbpers_ethn_code = '1' THEN
@@ -65,120 +81,105 @@ SELECT DISTINCT
             NULL
     END                                       race_black,
     spbpers_citz_code                         citizenship_type,
-    CASE
-        WHEN spbpers_ethn_code = '2' THEN
-            '3'
-        ELSE
-            NULL
-    END                                       race_native,
-    CASE
-        WHEN spbpers_ethn_code = '3' THEN
-            '4'
-        ELSE
-            NULL
-    END                                       race_asian,
-    CASE
-        WHEN spbpers_ethn_code = '4' THEN
-            '5'
-        ELSE
-            NULL
-    END                                       race_hispanic,
-    CASE
-        WHEN spbpers_ethn_code = '5' THEN
-            '6'
-        ELSE
-            NULL
-    END                                       race_white,
-    CASE
-        WHEN spbpers_ethn_code = '3' THEN
-            '4'
-        ELSE
-            NULL
-    END                                       race_hawpac,
-    CASE
-        WHEN 
-            sgbstdn_levl_code = 'GR'
-        THEN
-            'Graduate Master'
-        WHEN
-            sgrsatt_atts_code = 'SPEC'
-            -- sgrsatt_stts_code = spec is special student, atts_code of post is post-grad
-        THEN
-            'Special Student'
-        WHEN EXISTS (
-            SELECT
-                s1.sgrsatt_atts_code
-            FROM
-                sgrsatt s1
-            WHERE
-                    s1.sgrsatt_term_code_eff = (
-                        SELECT
-                            MAX(s2.sgrsatt_term_code_eff)
-                        FROM
-                            sgrsatt s2
-                        WHERE
-                            s2.sgrsatt_pidm = s1.sgrsatt_pidm
-                    )
-                AND sgrsatt_atts_code IN ( 'POST', 'PGND' )
-                AND s1.sgrsatt_pidm = sfbetrm_pidm
-        ) THEN
-            'Post-Grad'
-        WHEN 
-            sgbstdn_levl_code = 'UG' AND (SUM(shrtgpa_hours_earned) OVER (PARTITION BY shrtgpa_pidm)) < 30
-        THEN
-            'Freshman'
-        WHEN
-            sgbstdn_levl_code = 'UG' AND (SUM(shrtgpa_hours_earned) OVER (PARTITION BY shrtgpa_pidm)) BETWEEN 30 AND 59.99
-        THEN
-            'Sophomore'
-        WHEN
-            sgbstdn_levl_code = 'UG' AND (SUM(shrtgpa_hours_earned) OVER (PARTITION BY shrtgpa_pidm)) BETWEEN 60 AND 89.99
-        THEN
-            'Junior'
-        WHEN
-            sgbstdn_levl_code = 'UG' AND (SUM(shrtgpa_hours_earned) OVER (PARTITION BY shrtgpa_pidm)) BETWEEN 90 AND 999
-        THEN
-            'Senior'
-        WHEN
-            sgbstdn_levl_code = 'PR'
-        THEN
-            'First Professional'
-        ELSE
-            'Other'
-        END AS classification,
+    stvclas_desc                              classification,
     (select SFBETRM_MIN_HRS 
     from SFBETRM 
     where sgrsprt_pidm = SFBETRM_PIDM 
     and SFBETRM_TERM_CODE = 202420)           minimum_hours,
-    ''                                        bill_hrs
+    (
+        SELECT DISTINCT
+            SUM(sfrstcr_bill_hr)
+        FROM 
+            sfrstcr
+            JOIN sgrsprt ON sgrsprt_pidm = sfrstcr_pidm
+        WHERE
+            sfrstcr_pidm = sgrsprt_pidm
+            AND sfrstcr_term_code = 202420
+    ) bill_hrs,
     -- bill hrs and credit hrs in sfrstcr
+    nvl(o_shrlgpa.shrlgpa_hours_earned, 0)    overall_earned_hrs,
+    to_char(round(nvl(o_shrlgpa.shrlgpa_gpa, 0.00),
+                  2),
+            'fm90D00')                        cumulative_gpa,
+    nvl(i_shrlgpa.shrlgpa_hours_earned, 0)    inst_earned_hrs,
+    to_char(round(nvl(i_shrlgpa.shrlgpa_gpa, 0.00),
+                  2),
+            'fm90D00')                        inst_gpa,
+    t_shrlgpa.shrlgpa_hours_earned            xfer_earned_hrs,
+    to_char(round(t_shrlgpa.shrlgpa_gpa, 2),
+            'fm90D00')                        xfer_gpa,    
+    stvclas_desc                              classification,
+    stvcoll_desc                              college_desc,
+    ma_stvmajr.stvmajr_desc                   major_desc,
+    co_stvmajr.stvmajr_desc                   first_concentration_desc,
+    mi_stvmajr.stvmajr_desc                   first_minor_desc,
+    prim_spriden.spriden_last_name
+    || ', '
+    || prim_spriden.spriden_first_name
+    || ' '
+    || substr(prim_spriden.spriden_mi, 1, 1)
+    || '.'                                    primary_advisor,
+    CASE
+        WHEN
+            athl_sgradvr.sgradvr_advr_pidm IS NOT NULL THEN
+    athl_spriden.spriden_last_name
+    || ', '
+    || athl_spriden.spriden_first_name
+    || ' '
+    || substr(athl_spriden.spriden_mi, 1, 1)
+    || '.'
+    ELSE
+        ''
+    END
+                                            athl_advisor
 FROM 
     sgrsprt 
     JOIN w_sgrsprt ON w_sgrsprt_pidm = sgrsprt_pidm
+    JOIN w_sgradvr ON w_sgradvr_pidm = sgrsprt_pidm
+    
     LEFT JOIN sfbetrm ON sfbetrm_pidm = w_sgrsprt_pidm
         AND sfbetrm_term_code = 202420
-    LEFT JOIN spriden ON spriden_pidm = sgrsprt_pidm
-        AND spriden_change_ind IS NULL
+    JOIN spriden s_spriden ON s_spriden.spriden_pidm = sfbetrm_pidm
+        AND s_spriden.spriden_change_ind IS NULL
+        AND s_spriden.spriden_entity_ind = 'P'
     LEFT JOIN gobtpac ON gobtpac_pidm = sgrsprt_pidm
     LEFT JOIN sgbstdn ON sgbstdn_pidm = sgrsprt_pidm
     JOIN spbpers ON spbpers_pidm = sgrsprt_pidm
-    -- Classification
-    JOIN sgrsatt ON sgrsatt_pidm = sfbetrm_pidm
-        AND sgrsatt_term_code_eff = 
-        (
-            SELECT
-                MAX(s1.sgrsatt_term_code_eff)
-            FROM
-                sgrsatt s1
-            WHERE
-                s1.sgrsatt_pidm = sgrsprt_pidm
-        )
-    JOIN shrtgpa ON shrtgpa_pidm = sgrsprt_pidm
-        AND shrtgpa_levl_code = sgbstdn_levl_code
-        AND  ((SHRTGPA_TERM_CODE < 202420
-                AND SHRTGPA_GPA_TYPE_IND = 'I')
-                    OR
-                (SHRTGPA_TERM_CODE <= 202420
-                AND SHRTGPA_GPA_TYPE_IND = 'T'))
+
+    -- Class/College
+    JOIN w_sorlcur ON w_sorlcur_pidm = sfbetrm_pidm
+    JOIN sorlcur ON sorlcur_pidm = w_sorlcur_pidm
+                    AND sorlcur_seqno = w_sorlcur_seqno
+    LEFT JOIN stvcoll ON sorlcur_coll_code = stvcoll_code
+    JOIN stvclas ON stvclas_code = sgkclas.f_class_code(sfbetrm_pidm, sgbstdn_levl_code, sfbetrm_term_code)
+    
+
+    LEFT JOIN shrlgpa o_shrlgpa ON o_shrlgpa.shrlgpa_pidm = sfbetrm_pidm
+                     AND o_shrlgpa.shrlgpa_levl_code = sgbstdn_levl_code
+                     AND o_shrlgpa.shrlgpa_gpa_type_ind = 'O'
+    LEFT JOIN shrlgpa i_shrlgpa ON i_shrlgpa.shrlgpa_pidm = sfbetrm_pidm
+                     AND i_shrlgpa.shrlgpa_levl_code = sgbstdn_levl_code
+                     AND i_shrlgpa.shrlgpa_gpa_type_ind = 'I'
+    LEFT JOIN shrlgpa t_shrlgpa ON t_shrlgpa.shrlgpa_pidm = sfbetrm_pidm
+                                   AND t_shrlgpa.shrlgpa_levl_code = sgbstdn_levl_code
+                                   AND t_shrlgpa.shrlgpa_gpa_type_ind = 'T'
+                                   
+    -- Advisors
+    JOIN sgradvr prim_sgradvr ON prim_sgradvr.sgradvr_pidm = w_sgradvr_pidm
+                    AND prim_sgradvr.sgradvr_term_code_eff = w_sgradvr_term_code_eff
+                    AND sgradvr_prim_ind = 'Y'
+    JOIN spriden prim_spriden ON prim_spriden.spriden_pidm = prim_sgradvr.sgradvr_advr_pidm
+                              AND prim_spriden.spriden_change_ind IS NULL
+    
+    LEFT JOIN sgradvr athl_sgradvr ON athl_sgradvr.sgradvr_pidm = w_sgradvr_pidm
+                    AND athl_sgradvr.sgradvr_term_code_eff = w_sgradvr_term_code_eff
+                    AND athl_sgradvr.sgradvr_advr_code = 'ATHL'
+    LEFT JOIN spriden athl_spriden ON athl_spriden.spriden_pidm = athl_sgradvr.sgradvr_advr_pidm
+                              AND athl_spriden.spriden_change_ind IS NULL  
+                              
+    -- Majors
+    JOIN stvmajr ma_stvmajr ON ma_stvmajr.stvmajr_code = sgbstdn_majr_code_1
+    LEFT JOIN stvmajr co_stvmajr ON co_stvmajr.stvmajr_code = sgbstdn_majr_code_conc_1
+    LEFT JOIN stvmajr mi_stvmajr ON mi_stvmajr.stvmajr_code = sgbstdn_majr_code_minr_1
 ;        
   
