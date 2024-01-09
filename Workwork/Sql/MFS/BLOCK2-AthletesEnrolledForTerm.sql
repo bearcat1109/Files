@@ -82,6 +82,14 @@ SELECT DISTINCT
     END                                       race_black,
     spbpers_citz_code                         citizenship_type,
     stvclas_desc                              classification,
+    CASE 
+        WHEN 
+            sgbstdn_astd_code IS NOT NULL
+        THEN
+            stvastd_desc
+        ELSE
+            'Incomplete SGBSTDN Data'
+    END                                      academic_standing,
     (select SFBETRM_MIN_HRS 
     from SFBETRM 
     where sgrsprt_pidm = SFBETRM_PIDM 
@@ -144,7 +152,9 @@ FROM
         AND s_spriden.spriden_entity_ind = 'P'
     LEFT JOIN gobtpac ON gobtpac_pidm = sgrsprt_pidm
     LEFT JOIN sgbstdn ON sgbstdn_pidm = sgrsprt_pidm
+    LEFT JOIN stvastd ON stvastd_code = sgbstdn_astd_code
     JOIN spbpers ON spbpers_pidm = sgrsprt_pidm
+
 
     -- Class/College
     JOIN w_sorlcur ON w_sorlcur_pidm = sfbetrm_pidm
