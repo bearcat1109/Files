@@ -1,9 +1,9 @@
 -- Athletes Enrolled For Term - MFS
 -- Started 1/5/2023 Gabriel Berres
 
--- Academic_period, activity_desc1, sport_status_desc1, activity_desc2, sport_status_desc2, confidential_ind, ID, Last_name, 
--- First_name, nsu_email, citizenship_type, race_black, citizenship_type, race_native, race_asian, race_hispanic, race_white, race_hawpac, 
--- classification, academic_standing, minimum_hours, bill_hrs, credit_hrs, overall_earned_hrs, cumulative_hrs, inst_earned_hrs, inst_gpa, 
+-- Academic_period, activity_desc1, sport_status_desc1, activity_desc2, sport_status_desc2, confidential_ind, ID, Last_name,
+-- First_name, nsu_email, citizenship_type, race_black, citizenship_type, race_native, race_asian, race_hispanic, race_white, race_hawpac,
+-- classification, academic_standing, minimum_hours, bill_hrs, credit_hrs, overall_earned_hrs, cumulative_hrs, inst_earned_hrs, inst_gpa,
 -- xfer_gpa, college, major, concentration, minor, primary_advisor, athl_advisor, tahlequah, muskogee, broken arrow
 
 WITH w_sgrsprt AS (
@@ -19,7 +19,7 @@ WITH w_sgrsprt AS (
     FROM
         sgrsprt
     WHERE
-        sgrsprt_term_code = 202420 --:main_sql_queryterms.stvterm_code
+        sgrsprt_term_code = :main_mc_term.value --:main_mc_term.value
 ), w_sgradvr AS (
     SELECT DISTINCT
         sgradvr_pidm                    w_sgradvr_pidm,
@@ -28,7 +28,7 @@ WITH w_sgrsprt AS (
     FROM
         sgradvr
     WHERE
-        sgradvr_term_code_eff <= 202420
+        sgradvr_term_code_eff <= :main_mc_term.value
 ), w_sorlcur AS (
     SELECT DISTINCT
         sorlcur_pidm                    w_sorlcur_pidm,
@@ -36,8 +36,17 @@ WITH w_sgrsprt AS (
         OVER(PARTITION BY sorlcur_pidm) w_sorlcur_seqno
     FROM
         sorlcur
+), w_sgbstdn AS (
+    SELECT DISTINCT
+        sgbstdn_pidm                    w_sgbstdn_pidm,
+        MAX(sgbstdn_term_code_eff)
+        OVER(PARTITION BY sgbstdn_pidm) w_sgbstdn_term_code_eff
+    FROM
+        sgbstdn
+    WHERE
+        sgbstdn_term_code_eff <= :main_mc_term.value --:main_mc_term.stvterm_code
 )
-SELECT DISTINCT 
+SELECT DISTINCT
     sfbetrm_term_code           academic_period,
     (
         SELECT
@@ -81,28 +90,27 @@ SELECT DISTINCT
             NULL
     END                                       race_black,
     spbpers_citz_code                         citizenship_type,
-    stvclas_desc                              classification,
-    CASE 
-        WHEN 
+    CASE
+        WHEN
             sgbstdn_astd_code IS NOT NULL
         THEN
             stvastd_desc
         ELSE
-            'Incomplete SGBSTDN Data'
+            'Incomplete/Missing SGBSTDN Data'
     END                                      academic_standing,
-    (select SFBETRM_MIN_HRS 
-    from SFBETRM 
-    where sgrsprt_pidm = SFBETRM_PIDM 
-    and SFBETRM_TERM_CODE = 202420)           minimum_hours,
+    (select SFBETRM_MIN_HRS
+    from SFBETRM
+    where sgrsprt_pidm = SFBETRM_PIDM
+    and SFBETRM_TERM_CODE = :main_mc_term.value)           minimum_hours,
     (
         SELECT DISTINCT
             SUM(sfrstcr_bill_hr)
-        FROM 
+        FROM
             sfrstcr
             JOIN sgrsprt ON sgrsprt_pidm = sfrstcr_pidm
         WHERE
             sfrstcr_pidm = sgrsprt_pidm
-            AND sfrstcr_term_code = 202420
+            AND sfrstcr_term_code = :main_mc_term.value
     ) bill_hrs,
     -- bill hrs and credit hrs in sfrstcr
     nvl(o_shrlgpa.shrlgpa_hours_earned, 0)    overall_earned_hrs,
@@ -115,7 +123,7 @@ SELECT DISTINCT
             'fm90D00')                        inst_gpa,
     t_shrlgpa.shrlgpa_hours_earned            xfer_earned_hrs,
     to_char(round(t_shrlgpa.shrlgpa_gpa, 2),
-            'fm90D00')                        xfer_gpa,    
+            'fm90D00')                        xfer_gpa,
     stvclas_desc                              classification,
     stvcoll_desc                              college_desc,
     ma_stvmajr.stvmajr_desc                   major_desc,
@@ -139,19 +147,76 @@ SELECT DISTINCT
     ELSE
         ''
     END
-                                            athl_advisor
-FROM 
-    sgrsprt 
+                                            athl_advisor,
+     (
+        SELECT
+            'Y'
+        FROM
+            dual
+        WHERE
+            EXISTS (
+                SELECT
+                    'x'
+                FROM
+                    sfrstcr
+                WHERE
+                        sfrstcr_pidm = sfbetrm_pidm
+                    AND sfrstcr_term_code = sfbetrm_term_code
+                    AND sfrstcr_rsts_code IN ( 'RE', 'RW', 'AU' )
+                    AND sfrstcr_camp_code = '01'
+            )
+    )                                                       tahlequah,
+    (
+        SELECT
+            'Y'
+        FROM
+            dual
+        WHERE
+            EXISTS (
+                SELECT
+                    'x'
+                FROM
+                    sfrstcr
+                WHERE
+                        sfrstcr_pidm = sfbetrm_pidm
+                    AND sfrstcr_term_code = sfbetrm_term_code
+                    AND sfrstcr_rsts_code IN ( 'RE', 'RW', 'AU' )
+                    AND sfrstcr_camp_code = '02'
+            )
+    )                                                       muskogee,
+    (
+        SELECT
+            'Y'
+        FROM
+            dual
+        WHERE
+            EXISTS (
+                SELECT
+                    'x'
+                FROM
+                    sfrstcr
+                WHERE
+                        sfrstcr_pidm = sfbetrm_pidm
+                    AND sfrstcr_term_code = sfbetrm_term_code
+                    AND sfrstcr_rsts_code IN ( 'RE', 'RW', 'AU' )
+                    AND sfrstcr_camp_code = '03'
+            )
+    )                                                       broken_arrow
+FROM
+    sgrsprt
     JOIN w_sgrsprt ON w_sgrsprt_pidm = sgrsprt_pidm
     JOIN w_sgradvr ON w_sgradvr_pidm = sgrsprt_pidm
-    
+    JOIN w_sgbstdn ON w_sgbstdn_pidm = sgrsprt_pidm
+
     LEFT JOIN sfbetrm ON sfbetrm_pidm = w_sgrsprt_pidm
-        AND sfbetrm_term_code = 202420
+        AND sfbetrm_term_code = :main_mc_term.value
     JOIN spriden s_spriden ON s_spriden.spriden_pidm = sfbetrm_pidm
         AND s_spriden.spriden_change_ind IS NULL
         AND s_spriden.spriden_entity_ind = 'P'
     LEFT JOIN gobtpac ON gobtpac_pidm = sgrsprt_pidm
-    LEFT JOIN sgbstdn ON sgbstdn_pidm = sgrsprt_pidm
+    JOIN sgbstdn ON sgbstdn_pidm = sgrsprt_pidm
+        AND sgbstdn_term_code_eff = w_sgbstdn_term_code_eff
+        AND sgbstdn_stst_code NOT IN ( 'IS', 'IG' )
     LEFT JOIN stvastd ON stvastd_code = sgbstdn_astd_code
     JOIN spbpers ON spbpers_pidm = sgrsprt_pidm
 
@@ -162,7 +227,7 @@ FROM
                     AND sorlcur_seqno = w_sorlcur_seqno
     LEFT JOIN stvcoll ON sorlcur_coll_code = stvcoll_code
     JOIN stvclas ON stvclas_code = sgkclas.f_class_code(sfbetrm_pidm, sgbstdn_levl_code, sfbetrm_term_code)
-    
+
 
     LEFT JOIN shrlgpa o_shrlgpa ON o_shrlgpa.shrlgpa_pidm = sfbetrm_pidm
                      AND o_shrlgpa.shrlgpa_levl_code = sgbstdn_levl_code
@@ -173,23 +238,23 @@ FROM
     LEFT JOIN shrlgpa t_shrlgpa ON t_shrlgpa.shrlgpa_pidm = sfbetrm_pidm
                                    AND t_shrlgpa.shrlgpa_levl_code = sgbstdn_levl_code
                                    AND t_shrlgpa.shrlgpa_gpa_type_ind = 'T'
-                                   
+
     -- Advisors
     JOIN sgradvr prim_sgradvr ON prim_sgradvr.sgradvr_pidm = w_sgradvr_pidm
                     AND prim_sgradvr.sgradvr_term_code_eff = w_sgradvr_term_code_eff
                     AND sgradvr_prim_ind = 'Y'
     JOIN spriden prim_spriden ON prim_spriden.spriden_pidm = prim_sgradvr.sgradvr_advr_pidm
                               AND prim_spriden.spriden_change_ind IS NULL
-    
+
     LEFT JOIN sgradvr athl_sgradvr ON athl_sgradvr.sgradvr_pidm = w_sgradvr_pidm
                     AND athl_sgradvr.sgradvr_term_code_eff = w_sgradvr_term_code_eff
                     AND athl_sgradvr.sgradvr_advr_code = 'ATHL'
     LEFT JOIN spriden athl_spriden ON athl_spriden.spriden_pidm = athl_sgradvr.sgradvr_advr_pidm
-                              AND athl_spriden.spriden_change_ind IS NULL  
-                              
+                              AND athl_spriden.spriden_change_ind IS NULL
+
     -- Majors
     JOIN stvmajr ma_stvmajr ON ma_stvmajr.stvmajr_code = sgbstdn_majr_code_1
     LEFT JOIN stvmajr co_stvmajr ON co_stvmajr.stvmajr_code = sgbstdn_majr_code_conc_1
     LEFT JOIN stvmajr mi_stvmajr ON mi_stvmajr.stvmajr_code = sgbstdn_majr_code_minr_1
-;        
-  
+WHERE
+     sgbstdn_majr_code_1 = :main_mc_major.major
