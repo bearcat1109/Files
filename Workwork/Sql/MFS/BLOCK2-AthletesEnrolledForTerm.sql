@@ -45,6 +45,18 @@ WITH w_sgrsprt AS (
         sgbstdn
     WHERE
         sgbstdn_term_code_eff <= :main_mc_term.value --:main_mc_term.stvterm_code
+), b_sfrstcr AS
+(
+    SELECT
+        sfrstcr_pidm    b_sfrstcr_pidm,
+        sum(sfrstcr_bill_hr)
+        OVER (PARTITION BY sfrstcr_pidm)    b_sfrstcr_bill_hrs,
+        sum(sfrstcr_credit_hr)
+        OVER (PARTITION BY sfrstcr_pidm)    b_sfrstcr_credit_hrs
+    FROM
+        sfrstcr
+    WHERE
+        sfrstcr_term_code = :main_mc_term.value --:main_mc_term.stvterm_code
 )
 SELECT DISTINCT
     sfbetrm_term_code           academic_period,
@@ -102,17 +114,8 @@ SELECT DISTINCT
     from SFBETRM
     where sgrsprt_pidm = SFBETRM_PIDM
     and SFBETRM_TERM_CODE = :main_mc_term.value)           minimum_hours,
-    (
-        SELECT DISTINCT
-            SUM(sfrstcr_bill_hr)
-        FROM
-            sfrstcr
-            JOIN sgrsprt ON sgrsprt_pidm = sfrstcr_pidm
-        WHERE
-            sfrstcr_pidm = sgrsprt_pidm
-            AND sfrstcr_term_code = :main_mc_term.value
-    ) bill_hrs,
-    -- bill hrs and credit hrs in sfrstcr
+    b_sfrstcr_bill_hrs                        bill_hrs,
+    b_sfrstcr_credit_hrs                      credit_hrs,
     nvl(o_shrlgpa.shrlgpa_hours_earned, 0)    overall_earned_hrs,
     to_char(round(nvl(o_shrlgpa.shrlgpa_gpa, 0.00),
                   2),
@@ -207,6 +210,7 @@ FROM
     JOIN w_sgrsprt ON w_sgrsprt_pidm = sgrsprt_pidm
     JOIN w_sgradvr ON w_sgradvr_pidm = sgrsprt_pidm
     JOIN w_sgbstdn ON w_sgbstdn_pidm = sgrsprt_pidm
+    JOIN b_sfrstcr ON b_sfrstcr_pidm = sgrsprt_pidm
 
     LEFT JOIN sfbetrm ON sfbetrm_pidm = w_sgrsprt_pidm
         AND sfbetrm_term_code = :main_mc_term.value
