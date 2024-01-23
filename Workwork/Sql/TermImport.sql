@@ -10,7 +10,7 @@ where stvterm_code > '202320' AND stvterm_code != '999999';
 
 
 -- Written 8-28-2023 by Gabriel Berres, SLL Term Import
--- Updated 1/23/2023 Programmers + Rob
+-- Updated 1/23/2024 Programmers + Rob
 select distinct
     stvterm_code Term_Code,
     CASE
