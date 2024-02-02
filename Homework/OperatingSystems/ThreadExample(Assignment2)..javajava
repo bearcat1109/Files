@@ -1,0 +1,47 @@
+// CS Operating Systems assignment 2 Gabriel Berres
+// Setup
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+// CLass for my thread
+class CSOSThread extends Thread {
+    public void run() {
+        // File output declarations
+        String filepath = "log.txt";
+        try {
+            PrintWriter out = new PrintWriter("log.txt");
+
+            // Thread ops
+            for (int i = 0; i < 3; i++) {
+                out.println("Thread running: " + i);
+                try {
+                    out.println("Thread is running, you better go catch it");
+                    Thread.sleep(1000); // Sleep for 1 second
+                } catch (InterruptedException e) {
+                    System.out.println("Thread has been interrupted");
+                }
+            }
+            // Make sure "out" flushes
+            out.flush();
+            out.close();
+        } catch(Exception e)
+        {
+            System.out.println("Error");
+        }
+
+    }
+}
+
+// Called my thread 'thimble', since y'know, thread
+public class ThreadExample {
+    public static void main(String[] args) {
+        CSOSThread thimble = new CSOSThread();
+        thimble.start(); // Start the thread
+
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Please hit some keys on your keyboard:");
+        String userin = scan.nextLine();
+        System.out.println("User input the string: " + userin);
+    }
+}
