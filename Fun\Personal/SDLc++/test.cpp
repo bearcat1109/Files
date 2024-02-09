@@ -6,7 +6,7 @@
 using namespace std;
 
 const int WIDTH = 800, HEIGHT = 600;
-const double TEXT_SPEED = 0.5; // Adjust the speed as needed
+const int TEXT_SPEED = 1; // Adjust the speed as needed
 
 int main(int argc, char* argv[]) {
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Load a font (adjust the path and size as needed)
-    TTF_Font* font = TTF_OpenFont("C:\\Users\\berresg\\Desktop\\download\\Roboto_Mono\\RobotoMono-VariableFont_wght.ttf", 24);
+    TTF_Font* font = TTF_OpenFont("C:/Users/gabri/Documents/Coding/cpp/SDLGame/SDLGame/RobotoMono-VariableFont_wght.ttf", 18);
 
     if (!font) {
         cout << "TTF_OpenFont failed: " << TTF_GetError() << endl;
