@@ -3,10 +3,10 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-
 using namespace std;
 
 const int WIDTH = 800, HEIGHT = 600;
+const double TEXT_SPEED = 0.5; // Adjust the speed as needed
 
 int main(int argc, char* argv[]) {
 
@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
 
     SDL_SetWindowIcon(window, icon);
 
+    SDL_Rect destRect = { 100, 100, 0, 0 }; // Initial position and size of the text box
+
     SDL_Event windowEvent;
 
     while (true) {
@@ -53,6 +55,21 @@ int main(int argc, char* argv[]) {
             if (SDL_QUIT == windowEvent.type) {
                 break;
             }
+        }
+
+        // Handle key presses for moving the text box
+        const Uint8* keyState = SDL_GetKeyboardState(nullptr);
+        if (keyState[SDL_SCANCODE_W] && destRect.y > 0) {
+            destRect.y -= TEXT_SPEED;
+        }
+        if (keyState[SDL_SCANCODE_S] && destRect.y + destRect.h < HEIGHT) {
+            destRect.y += TEXT_SPEED;
+        }
+        if (keyState[SDL_SCANCODE_A] && destRect.x > 0) {
+            destRect.x -= TEXT_SPEED;
+        }
+        if (keyState[SDL_SCANCODE_D] && destRect.x + destRect.w < WIDTH) {
+            destRect.x += TEXT_SPEED;
         }
 
         // Clear the renderer
@@ -69,14 +86,11 @@ int main(int argc, char* argv[]) {
         SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
         // Get the width and height of the text surface
-        int textWidth = textSurface->w;
-        int textHeight = textSurface->h;
-
-        // Set the destination rectangle for rendering the text
-        SDL_Rect destRect = { 100, 100, textWidth, textHeight }; // Adjust the position as needed
+        destRect.w = textSurface->w;
+        destRect.h = textSurface->h;
 
         // Render the text on the window
-        SDL_RenderCopy(renderer, textTexture, NULL, &destRect);
+        SDL_RenderCopy(renderer, textTexture, nullptr, &destRect);
 
         // Clean up resources
         SDL_DestroyTexture(textTexture);
