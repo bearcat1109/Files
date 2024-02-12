@@ -1,17 +1,25 @@
 #include "game.h"
 #include <iostream>
 #include <SDL.h>
+#include "textureManager.h"
+#include "gameObject.h"
 using namespace std;
 
-Game::Game()
-{
+// Texture manager (unneeded now)
+//SDL_Texture* playerTex;
+//SDL_Rect srcRect, destRect;
 
-}
+gameObject* player;
+gameObject* enemy;
+
+
+SDL_Renderer* Game::renderer = nullptr;
+
+Game::Game()
+{}
 
 Game::~Game()
-{
-
-}
+{}
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -43,6 +51,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	{
 		isRunning = false;
 	}
+
+	//playerTex = textureManager::LoadTexture("assets/player.png", renderer);
+	player = new gameObject("assets/player.png", 0, 0);
+	enemy = new gameObject("assets/enemy.png", 50, 50);
 }
 
 
@@ -64,12 +76,28 @@ void Game::handleEvents()
 }
 
 void Game::update()
-{}
+{
+	// Old
+	/*cnt++;
+	destRect.h = 64;
+	destRect.w = 64;
+	destRect.x = cnt;
+	cout << cnt << endl;*/
+
+	player->update();
+	enemy->update();
+}
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
 
+	// Old now
+	//SDL_RenderCopy(renderer, playerTex, NULL, &destRect);
+	
+	player->render();
+	enemy->render();
+	
 	// Add stuff to render
 	SDL_RenderPresent(renderer);
 }
