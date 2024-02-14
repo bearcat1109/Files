@@ -18,6 +18,10 @@ public class BufferImpl<E> implements Buffer<E>
 	public BufferImpl(int count, int in, int out, int BUFFER_SIZE)
 	{
 		
+        BufferImpl.count = count;
+        BufferImpl.in = in;
+        BufferImpl.out = out;
+        BufferImpl.elements = new ArrayList<>(BUFFER_SIZE);
 	}
 
 
