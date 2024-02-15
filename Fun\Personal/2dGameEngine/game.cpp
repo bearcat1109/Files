@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "textureManager.h"
 #include "gameObject.h"
+//#include "map.h"
 using namespace std;
 
 // Texture manager (unneeded now)
@@ -11,6 +12,7 @@ using namespace std;
 
 gameObject* player;
 gameObject* enemy;
+//Map* map;
 
 
 SDL_Renderer* Game::renderer = nullptr;
@@ -55,6 +57,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	//playerTex = textureManager::LoadTexture("assets/player.png", renderer);
 	player = new gameObject("assets/player.png", 0, 0);
 	enemy = new gameObject("assets/enemy.png", 50, 50);
+	//map = new Map();
 }
 
 
@@ -94,7 +97,7 @@ void Game::render()
 
 	// Old now
 	//SDL_RenderCopy(renderer, playerTex, NULL, &destRect);
-	
+	//map->drawMap();
 	player->render();
 	enemy->render();
 	
