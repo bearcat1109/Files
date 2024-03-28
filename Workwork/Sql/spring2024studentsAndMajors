@@ -1,0 +1,24 @@
+SELECT DISTINCT 
+    spriden_first_name,
+    spriden_last_name,
+    stvmajr_desc
+FROM 
+    sfbetrm
+    JOIN sfrstcr ON sfrstcr_pidm = sfbetrm_pidm
+    LEFT JOIN spriden ON spriden_pidm = sfbetrm_pidm
+        AND spriden_change_ind IS NULL
+        AND spriden_entity_ind = 'P'
+    JOIN sgbstdn ON sgbstdn_pidm = sfbetrm_pidm
+        AND sgbstdn_term_code_eff = 
+        (
+            SELECT 
+                MAX(s1.sgbstdn_term_code_eff) 
+            FROM 
+                sgbstdn s1
+            WHERE 
+                s1.sgbstdn_pidm = sfbetrm_pidm
+        )
+    JOIN stvmajr ON sgbstdn_majr_code_1 = stvmajr_code
+WHERE
+    sfbetrm_term_code = '202430'
+;
