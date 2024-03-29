@@ -132,6 +132,74 @@ select * from Rating;
 ALTER TABLE Pets ADD City VARCHAR(255);
 ALTER TABLE Pets ADD State VARCHAR(255);
 
+ALTER TABLE PotentialOwner ADD City VARCHAR(255);
+ALTER TABLE PotentialOwner ADD State VARCHAR(255);
+-- Add state automatically
+UPDATE PotentialOwner
+SET State = SUBSTRING(Address, LEN(Address) - 7, 2);
+
+UPDATE PotentialOwner 
+SET City = 'Anytown'
+WHERE [Potential Owner ID] = 1;
+UPDATE PotentialOwner 
+SET City = 'Smallville'
+WHERE [Potential Owner ID] = 2;
+UPDATE PotentialOwner 
+SET City = 'Suburbia'
+WHERE [Potential Owner ID] = 3;
+UPDATE PotentialOwner 
+SET City = 'Cityville'
+WHERE [Potential Owner ID] = 4;
+UPDATE PotentialOwner 
+SET City = 'Countryside'
+WHERE [Potential Owner ID] = 5;
+UPDATE PotentialOwner 
+SET City = 'Seaside'
+WHERE [Potential Owner ID] = 6;
+UPDATE PotentialOwner 
+SET City = 'Metropolis'
+WHERE [Potential Owner ID] = 7;
+UPDATE PotentialOwner 
+SET City = 'Uptown'
+WHERE [Potential Owner ID] = 8;
+UPDATE PotentialOwner 
+SET City = 'Suburbia'
+WHERE [Potential Owner ID] = 9;
+UPDATE PotentialOwner 
+SET City = 'Countryside'
+WHERE [Potential Owner ID] = 10;
+UPDATE PotentialOwner 
+SET City = 'Cityville'
+WHERE [Potential Owner ID] = 11;
+UPDATE PotentialOwner 
+SET City = 'Seaside'
+WHERE [Potential Owner ID] = 12;
+UPDATE PotentialOwner 
+SET City = 'Uptown'
+WHERE [Potential Owner ID] = 13;
+UPDATE PotentialOwner 
+SET City = 'Metropolis'
+WHERE [Potential Owner ID] = 14;
+UPDATE PotentialOwner 
+SET City = 'Suburbia'
+WHERE [Potential Owner ID] = 15;
+UPDATE PotentialOwner 
+SET City = 'Cityville'
+WHERE [Potential Owner ID] = 16;
+UPDATE PotentialOwner 
+SET City = 'Seaside'
+WHERE [Potential Owner ID] = 17;
+UPDATE PotentialOwner 
+SET City = 'Countryside'
+WHERE [Potential Owner ID] = 18;
+UPDATE PotentialOwner 
+SET City = 'Uptown'
+WHERE [Potential Owner ID] = 19;
+UPDATE PotentialOwner 
+SET City = 'Cityville'
+WHERE [Potential Owner ID] = 20;
+
+
 
 
 -- q.3 - Had to use brackets since some names include spaces
