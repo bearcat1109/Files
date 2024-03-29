@@ -49,27 +49,27 @@ CREATE TABLE Rating (
 
 USE petAdoption;
 -- Insert statements - there's probably a few typos.
-INSERT INTO Pets ([pet ID], [Tagid], [PetType], [Species], [Breed], [PrimaryColor], [Name], [Gender], [BirthDate], [IntakeDate], [Height], [Weight], [SpayedNeutered], [Status], [Comments]) VALUES
-(1, 'A123456', 'Dog', 'Canine', 'Labrrador Retriever', 'Golden', 'Max', 'Male', '2020-05-15', '2020-06-01', 24, 65, 'Yes', 'Adopted', 'Friendly and energetic'),
-(2, 'B789012', 'Cat', 'Feline', 'Siamese', 'Seal Point', 'Luna', 'Female', '2019-08-22', '2019-09-10', 12, 10, 'Yes', 'Available', 'Playful and affectionate'),
-(3, 'C345678', 'Dog', 'Canine', 'German Shepherd', 'Black/Tan', 'Rocky', 'Male', '2018-02-10', '2018-03-05', 28, 80, 'No', 'On Hold', 'Requires special diet'),
-(4, 'D901234', 'Cat', 'Feline', 'Persian', 'White', 'Bella', 'Female', '2021-01-07', '2021-02-01', 10, 12, 'Yes', 'Adopted', 'Loves cuddling'),
-(5, 'E567890', 'Dog', 'Canine', 'Beagle', 'Tri-color', 'Daisy', 'Female', '2017-09-18', '2017-10-05', 18, 25, 'Yes', 'Available', 'Good with children'),
-(6, 'F123456', 'Cat', 'Feline', 'Maine Coon', 'Tabby', 'Simba', 'Male', '2019-04-03', '2019-04-20', 16, 15, 'No', 'Adopted', 'Shy but sweet nature'),
-(7, 'G789012', 'Dog', 'Canine', 'Dachshund', 'Red', 'Chloe', 'Female', '2022-06-12', '2022-07-01', 12, 18, 'Yes', 'Available', 'Loves to play fetch'),
-(8, 'H345678', 'Cat', 'Feline', 'Ragdoll', 'Blue Bicolor', 'Oliver', 'Male', '2020-11-30', '2020-12-15', 14, 14, 'Yes', 'On Hold', 'Requires grooming'),
-(9, 'I901234', 'Dog', 'Canine', 'Bulldog', 'Brindle', 'Rocky', 'Male', '2016-07-04', '2016-08-01', 20, 75, 'Yes', 'Adopted', 'Gentle and calm'),
-(10, 'J567890', 'Cat', 'Feline', 'Bengal', 'Spotted', 'Mia', 'Female', '2020-02-14', '2020-03-01', 11, 11, 'Yes', 'Available', 'Enjoys interactive toys'),
-(11, 'K123456', 'Dog', 'Canine', 'Poodle', 'Apricot', 'Teddy', 'Male', '2019-05-09', '2019-06-01', 15, 20, 'No', 'Adopted', 'Requires regular walks'),
-(12, 'L789012', 'Cat', 'Feline', 'Sphynx', 'Pink', 'Gizmo', 'Male', '2017-12-25', '2018-01-10', 8, 9, 'Yes', 'Available', 'Indoor cat'),
-(13, 'M345678', 'Dog', 'Canine', 'Golden Retriever', 'Cream', 'Lily', 'Female', '2020-09-03', '2020-09-20', 22, 60, 'Yes', 'Adopted', 'Loves water activities'),
-(14, 'N901234', 'Cat', 'Feline', 'Scottish Fold', 'Silver Tabby', 'Whiskers', 'Female', '2018-04-17', '2018-05-01', 9, 10, 'Yes', 'On Hold', 'Requires special care'),
-(15, 'O567890', 'Dog', 'Canine', 'Shih Tzu', 'White', 'Toby', 'Male', '2017-01-30', '2017-02-15', 10, 12, 'Yes', 'Adopted', 'Affectionate and playful'),
-(16, 'P123456', 'Cat', 'Feline', 'Abyssinian', 'Ruddy', 'Leo', 'Male', '2019-06-08', '2019-07-01', 12, 14, 'Yes', 'Available', 'Active and curious'),
-(17, 'Q789012', 'Dog', 'Canine', 'Boxer', 'Fawn', 'Zoey', 'Female', '2015-11-12', '2015-12-01', 25, 70, 'No', 'On Hold', 'Requires experienced owner'),
-(18, 'R345678', 'Cat', 'Feline', 'Birman', 'Cream Point', 'Luna', 'Female', '2021-03-22', '2021-04-01', 11, 13, 'Yes', 'Adopted', 'Playful and talkative'),
-(19, 'S901234', 'Dog', 'Canine', 'Rottweiler', 'Black/Brown', 'Duke', 'Male', '2018-08-07', '2018-09-01', 27, 90, 'Yes', 'Available', 'Protective and loyal'),
-(20, 'T567890', 'Cat', 'Feline', 'Oriental Shorthair', 'Ebony', 'Shadow', 'Male', '2022-01-14', '2022-02-01', 10, 11, 'No', 'Adopted', 'Independent and curious');
+INSERT INTO Pets ([pet ID], [Tagid], [PetType], [Species], [Breed], [PrimaryColor], [Name], [Gender], [BirthDate], [IntakeDate], [Height], [Weight], [SpayedNeutered], [Status], [Comments], [City], [State]) VALUES
+(1, 'A123456', 'Dog', 'Canine', 'Labrrador Retriever', 'Golden', 'Max', 'Male', '2020-05-15', '2020-06-01', 24, 65, 'Yes', 'Adopted', 'Friendly and energetic', 'Oklahoma City', 'Oklahoma'),
+(2, 'B789012', 'Cat', 'Feline', 'Siamese', 'Seal Point', 'Luna', 'Female', '2019-08-22', '2019-09-10', 12, 10, 'Yes', 'Available', 'Playful and affectionate', 'Austin', 'Texas'),
+(3, 'C345678', 'Dog', 'Canine', 'German Shepherd', 'Black/Tan', 'Rocky', 'Male', '2018-02-10', '2018-03-05', 28, 80, 'No', 'On Hold', 'Requires special diet', 'Des Moines', 'Iowa'),
+(4, 'D901234', 'Cat', 'Feline', 'Persian', 'White', 'Bella', 'Female', '2021-01-07', '2021-02-01', 10, 12, 'Yes', 'Adopted', 'Loves cuddling', 'Little Rock', 'Arkansas'),
+(5, 'E567890', 'Dog', 'Canine', 'Beagle', 'Tri-color', 'Daisy', 'Female', '2017-09-18', '2017-10-05', 18, 25, 'Yes', 'Available', 'Good with children', 'Minneapolis', 'Minnesota'),
+(6, 'F123456', 'Cat', 'Feline', 'Maine Coon', 'Tabby', 'Simba', 'Male', '2019-04-03', '2019-04-20', 16, 15, 'No', 'Adopted', 'Shy but sweet nature', 'Albany', 'New York'),
+(7, 'G789012', 'Dog', 'Canine', 'Dachshund', 'Red', 'Chloe', 'Female', '2022-06-12', '2022-07-01', 12, 18, 'Yes', 'Available', 'Loves to play fetch', 'Sacramento', 'California'),
+(8, 'H345678', 'Cat', 'Feline', 'Ragdoll', 'Blue Bicolor', 'Oliver', 'Male', '2020-11-30', '2020-12-15', 14, 14, 'Yes', 'On Hold', 'Requires grooming', 'Tallahassee', 'Florida'),
+(9, 'I901234', 'Dog', 'Canine', 'Bulldog', 'Brindle', 'Rocky', 'Male', '2016-07-04', '2016-08-01', 20, 75, 'Yes', 'Adopted', 'Gentle and calm', 'Denver', 'Colorado'),
+(10, 'J567890', 'Cat', 'Feline', 'Bengal', 'Spotted', 'Mia', 'Female', '2020-02-14', '2020-03-01', 11, 11, 'Yes', 'Available', 'Enjoys interactive toys', 'Phoenix', 'Arizona'),
+(11, 'K123456', 'Dog', 'Canine', 'Poodle', 'Apricot', 'Teddy', 'Male', '2019-05-09', '2019-06-01', 15, 20, 'No', 'Adopted', 'Requires regular walks', 'Honolulu', 'Hawaii'),
+(12, 'L789012', 'Cat', 'Feline', 'Sphynx', 'Pink', 'Gizmo', 'Male', '2017-12-25', '2018-01-10', 8, 9, 'Yes', 'Available', 'Indoor cat', 'Salt Lake City', 'Utah'),
+(13, 'M345678', 'Dog', 'Canine', 'Golden Retriever', 'Cream', 'Lily', 'Female', '2020-09-03', '2020-09-20', 22, 60, 'Yes', 'Adopted', 'Loves water activities', 'Montpelier', 'Vermont'),
+(14, 'N901234', 'Cat', 'Feline', 'Scottish Fold', 'Silver Tabby', 'Whiskers', 'Female', '2018-04-17', '2018-05-01', 9, 10, 'Yes', 'On Hold', 'Requires special care', 'Cheyenne', 'Wyoming'),
+(15, 'O567890', 'Dog', 'Canine', 'Shih Tzu', 'White', 'Toby', 'Male', '2017-01-30', '2017-02-15', 10, 12, 'Yes', 'Adopted', 'Affectionate and playful', 'Columbus', 'Ohio'),
+(16, 'P123456', 'Cat', 'Feline', 'Abyssinian', 'Ruddy', 'Leo', 'Male', '2019-06-08', '2019-07-01', 12, 14, 'Yes', 'Available', 'Active and curious', 'Santa Fe', 'New Mexico'),
+(17, 'Q789012', 'Dog', 'Canine', 'Boxer', 'Fawn', 'Zoey', 'Female', '2015-11-12', '2015-12-01', 25, 70, 'No', 'On Hold', 'Requires experienced owner', 'Augusta', 'Maine'),
+(18, 'R345678', 'Cat', 'Feline', 'Birman', 'Cream Point', 'Luna', 'Female', '2021-03-22', '2021-04-01', 11, 13, 'Yes', 'Adopted', 'Playful and talkative', 'Frankfort', 'Kentucky'),
+(19, 'S901234', 'Dog', 'Canine', 'Rottweiler', 'Black/Brown', 'Duke', 'Male', '2018-08-07', '2018-09-01', 27, 90, 'Yes', 'Available', 'Protective and loyal', 'Baton Rouge', 'Louisiana'),
+(20, 'T567890', 'Cat', 'Feline', 'Oriental Shorthair', 'Ebony', 'Shadow', 'Male', '2022-01-14', '2022-02-01', 10, 11, 'No', 'Adopted', 'Independent and curious', 'Topeka', 'Kansas');
 
 -- Potential Owners table
 USE petAdoption;
@@ -124,3 +124,10 @@ INSERT INTO Rating ([UserID], [PetID], [Date], [Satisfaction], [Comments]) VALUE
 
 
 use petAdoption;
+select * from Pets;
+select * from Adoption;
+select * from PotentialOwner;
+select * from Rating;
+
+ALTER TABLE Pets ADD City VARCHAR(255);
+ALTER TABLE Pets ADD State VARCHAR(255);
