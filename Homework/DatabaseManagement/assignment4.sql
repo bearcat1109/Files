@@ -240,3 +240,74 @@ FROM
 WHERE
 	Pets.State IN ('Texas', 'Oklahoma', 'New Mexico');
 
+-- q.7 
+SELECT
+	p.City, 
+	AVG(r.Satisfaction) AvgRating
+FROM 
+	Rating r
+	JOIN PotentialOwner p ON r.UserID = p.[Potential Owner ID]
+GROUP BY 
+	p.City;
+
+-- q.8 - Use NOT EXISTS to cut cities with no rating
+SELECT DISTINCT	
+	po.City
+FROM 
+	PotentialOwner po
+WHERE NOT EXISTS
+(
+	SELECT 
+		1
+	FROM 
+		Rating r
+	WHERE r.UserID = po.[Potential Owner ID]
+)
+
+-- q.9 - Greater than or equal >= than 9 satisfaction
+SELECT DISTINCT
+	p.[Pet ID], 
+	p.Name, 
+	p.PetType, 
+	p.Breed, 
+	p.PrimaryColor, 
+	p.City, 
+	p.State
+FROM 
+	Pets p
+	JOIN Adoption a ON p.[pet ID] = a.PetID
+	JOIN Rating r ON a.OwnerID = r.UserID 
+		AND a.petID = r.petID
+WHERE 
+	r.Satisfaction >= 9;
+
+-- q.10 - All adopted pets, most recent first
+SELECT 
+    p.Name AS PetName, 
+    p.PetType, 
+    p.Breed, 
+    a.AdoptionDate, 
+    po.[First Name] + ' ' + po.[Last Name] AS OwnerName
+FROM 
+    Adoption a
+	JOIN Pets p ON a.PetID = p.[pet ID]
+	JOIN PotentialOwner po ON a.OwnerID = po.[Potential Owner ID]
+ORDER BY 
+    a.AdoptionDate DESC;
+
+-- q. 11 - All adopted pets and ratings given, with comments, 2020+
+SELECT DISTINCT
+	p.[Pet ID]		PetID, 
+	p.Name			Name, 
+	a.AdoptionDate	AdoptionDate,
+	r.Satisfaction	Rating,
+	r.Comments		Comments
+FROM 
+	Adoption a
+	JOIN Pets p ON a.PetID = p.[pet ID]
+	JOIN Rating r ON a.PetID = r.PetID 
+		AND a.OwnerID = r.UserID
+WHERE 
+    a.AdoptionDate > '2020-01-01'
+ORDER BY 
+    r.Satisfaction DESC;
