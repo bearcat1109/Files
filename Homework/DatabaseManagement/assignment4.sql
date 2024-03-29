@@ -131,3 +131,44 @@ select * from Rating;
 
 ALTER TABLE Pets ADD City VARCHAR(255);
 ALTER TABLE Pets ADD State VARCHAR(255);
+
+
+
+-- q.3 - Had to use brackets since some names include spaces
+use petAdoption;
+
+SELECT 
+    Pets.Name, 
+    Pets.PetType, 
+    Pets.Breed, 
+    PotentialOwner.Address
+FROM 
+    Pets 
+JOIN 
+    PotentialOwner ON Pets.[pet ID] = PotentialOwner.[Potential Owner ID] 
+WHERE 
+    Pets.PetType = 'Dog' 
+	AND PotentialOwner.Address LIKE '%TX%' OR PotentialOwner.Address LIKE '%Texas%'
+    AND Pets.Status = 'Available';
+
+
+-- q.4
+use petAdoption;
+
+SELECT DISTINCT
+	Pets.City + ', ' + Pets.State
+FROM 
+	Pets
+WHERE
+	Pets.PetType = 'Cat'
+	And Pets.Status = 'Available'
+;
+
+-- q.5 - All pets in Texas, OK, NM
+SELECT 
+	*
+FROM 
+	Pets
+WHERE
+	Pets.State IN ('Texas', 'Oklahoma', 'New Mexico');
+
