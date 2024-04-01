@@ -223,4 +223,4 @@ FROM
 WHERE
     goradid_adid_code = 'REUP'
 ORDER BY
-    w_tbraccd_balance DESC;
+    spriden_id ASC;
