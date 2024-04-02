@@ -42,11 +42,50 @@ SELECT DISTINCT
     END
     ||
     CASE
+        WHEN TO_NUMBER(:main_lb_terms) <= 202510
+        THEN(
+            CASE
             WHEN ssbsect_schd_code IN ( '04', '06', '08', '10', '11',
                                         '28' ) THEN
                 'INDV'
             -- moved 22A/23A to HFLX 3/29/24 berresg
-            WHEN ssbsect_schd_code IN ( '22', '23', '31',
+            WHEN ssbsect_schd_code IN ( '22', '23', '31', '22A', '23A',
+                                        '30', '27A', '26A', '27', '26',
+                                        '33', '32', '33A', '32A', '31A',
+                                        '30A' ) THEN
+                'BLND'
+            -- moved 34/35 to VCM
+            WHEN ssbsect_schd_code IN ( '25', '24', '25A', '24A', '21',
+                                        '20', '21A', '20A', '35', '34',
+                                        '14', '15', '05' ) THEN
+                'ONLN'
+            WHEN ssbsect_schd_code IN ( '16', '17', '29',  '18', '19'  ) THEN
+                'INTN'
+            WHEN ssbsect_schd_code IN ( '03', '12', '13', '00A', '01A' ) THEN
+                'TRAD'
+            WHEN ssbsect_schd_code IN ( '02', '07' ) THEN
+                'EXTN'
+            --WHEN ssbsect_schd_code IN ( '05' ) THEN
+                --'CORR - '
+            WHEN ssbsect_schd_code IN ( '00', '01' ) THEN
+                'REGC'
+            WHEN ssbsect_schd_code IN ( '09' ) THEN
+                'ZERO'
+            WHEN ssbsect_schd_code LIKE 'CE%' THEN
+                'CNED'
+            ELSE
+                'TRAD'
+            END
+            )
+        WHEN TO_NUMBER(:main_lb_terms) >= 202520
+            THEN
+            (
+                CASE
+            WHEN ssbsect_schd_code IN ( '04', '06', '08', '10', '11',
+                                        '28' ) THEN
+                'INDV'
+            -- moved 22A/23A to HFLX 3/29/24 berresg
+            WHEN ssbsect_schd_code IN ( '22', '23', '31', --'22A', '23A',
                                         '30', '27A', '26A', '27', '26',
                                         '33', '32', '33A', '32A', '31A',
                                         '30A' ) THEN
@@ -70,8 +109,7 @@ SELECT DISTINCT
                 'ZERO'
             WHEN ssbsect_schd_code LIKE 'CE%' THEN
                 'CNED'
-            -- Changes 3/29/24 berresg
-            WHEN 
+            WHEN
                 ssbsect_schd_code IN ('22A', '23A')
             THEN
                 'HFLX'
@@ -81,7 +119,9 @@ SELECT DISTINCT
                 'VCM'
             ELSE
                 'TRAD'
-    END                                       AS "Section_Name",
+            END
+            )
+    END AS "Section_Name",
     scbcrse_subj_code
     || ' '
     || scbcrse_crse_numb                      AS "Course_Code",
@@ -104,4 +144,4 @@ FROM
     LEFT JOIN gobtpac ON gobtpac_pidm = ssksels.f_section_instructor(ssbsect_crn, ssbsect_term_code, 'Y', '')
 WHERE
     ssbsect_ssts_code = 'A'
-    AND stvterm_code = '202430';
+    AND stvterm_code = :main_lb_terms
