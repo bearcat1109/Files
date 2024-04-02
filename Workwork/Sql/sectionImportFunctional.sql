@@ -1,5 +1,4 @@
--- Re-added Instructors 1-24-2024 Gabriel + Rob
--- Delivery Method Code Changes 4-2-2024 Gabriel
+-- Re-added Instructors 1-24-2023 Gabriel + Rob
 WITH w_scbcrse AS (
     SELECT DISTINCT
         scbcrse_subj_code                                       AS w_scbcrse_subj_code,
@@ -85,9 +84,9 @@ SELECT DISTINCT
             WHEN ssbsect_schd_code IN ( '04', '06', '08', '10', '11',
                                         '28' ) THEN
                 'INDV'
-            -- moved 22A/23A to HFLX 3/29/24 berresg
+            -- moved 22A/23A/26A/27A to HFLX 3/29/24 berresg
             WHEN ssbsect_schd_code IN ( '22', '23', '31', --'22A', '23A',
-                                        '30', '27A', '26A', '27', '26',
+                                        '30', '27', '26', --'26A', '26A',
                                         '33', '32', '33A', '32A', '31A',
                                         '30A' ) THEN
                 'BLND'
@@ -110,8 +109,8 @@ SELECT DISTINCT
                 'ZERO'
             WHEN ssbsect_schd_code LIKE 'CE%' THEN
                 'CNED'
-            WHEN
-                ssbsect_schd_code IN ('22A', '23A')
+            WHEN 
+                ssbsect_schd_code IN ('22A', '23A', '26A', '27A')
             THEN
                 'HFLX'
             WHEN
@@ -122,7 +121,7 @@ SELECT DISTINCT
                 'TRAD'
             END
             )
-    END AS "Section_Name",
+    END AS "Section_Name",      
     scbcrse_subj_code
     || ' '
     || scbcrse_crse_numb                      AS "Course_Code",
