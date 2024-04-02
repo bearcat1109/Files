@@ -1,4 +1,5 @@
--- Re-added Instructors 1-24-2023 Gabriel + Rob
+-- Re-added Instructors 1-24-2024 Gabriel + Rob
+-- Delivery Method Code Changes 4-2-2024 Gabriel
 WITH w_scbcrse AS (
     SELECT DISTINCT
         scbcrse_subj_code                                       AS w_scbcrse_subj_code,
