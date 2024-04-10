@@ -5,7 +5,8 @@ CREATE TABLE ZOOIDEN
 	animal_id INT PRIMARY KEY, 
 	animal_name VARCHAR(255),
 	caretaker_id VARCHAR(255) UNIQUE,
-	area_code INT
+	area_code INT,
+	feed_schedule_code INT
 );
 
 CREATE TABLE ZOOAREA
