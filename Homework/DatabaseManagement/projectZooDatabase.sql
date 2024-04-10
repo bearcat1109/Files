@@ -38,3 +38,31 @@ CREATE TABLE ZOOFEED
 	feed_schedule INT UNIQUE,
 	feed_schedule_desc VARCHAR(255) 
 );
+
+
+-- Insert
+INSERT INTO ZOOIDEN (animal_id, animal_name, caretaker_id, area_code, feed_schedule_code) VALUES 
+(1, 'Simba the Lion', 1, 1, 1),  -- Area code African Safari
+(2, 'Dumbo the Elephant', 1, 1, 1),
+(3, 'Tallulah the Giraffe', 1, 1, 1),
+(4, 'Ziggy the Zebra', 2, 1, 1),  
+(5, 'Imbubo the Meerkat', 2, 1, 1),
+(6, 'Stripes the Tiger', 3, 2, 1), -- Area code Jungle
+(7, 'Kong the Gorilla', 3, 2, 1),
+(8, 'Rusty the Red Panda', 3, 2, 1),
+(9, 'Charlie the Chimpanzee', 4, 2, 1),
+(10, 'Luna the Lemur', 4, 2, 2),
+(11, 'Usain the Sloth', 4, 2, 2),
+(12, 'Ollie the Orangutan', 4, 2, 3),
+(13, 'Paul the Polar Bear', 5, 3, 1),  -- Area code Tundra
+(14, 'Saoirse the SEal', 5, 3, 1),
+(15, 'Penny the Penguin', 5, 3, 1),
+(16, 'Peter the Penguin', 6, 3, 1),
+(17, 'Eli the Eel', 7, 4, 4),   -- Area Code Aquarium
+(18, 'Ursula the Octopus', 7, 4, 4),
+(19, 'Alex the Axolotl', 7, 4, 4),
+(20, 'Sydney the Squid', 8, 4, 4),
+(22, 'Yoink the Leopard Gecko', 9, 5, 5),      -- Area code Reptile Kingdom
+(23, 'Drake the Komodo Dragon', 9, 5, 5),
+(24, 'Skyler the Blue-Tongued Skink', 10, 5, 5),
+(25, 'Frank the Python', 10, 5, 5)
