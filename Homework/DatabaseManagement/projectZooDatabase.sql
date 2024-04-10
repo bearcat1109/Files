@@ -66,3 +66,18 @@ INSERT INTO ZOOIDEN (animal_id, animal_name, caretaker_id, area_code, feed_sched
 (23, 'Drake the Komodo Dragon', 9, 5, 5),
 (24, 'Skyler the Blue-Tongued Skink', 10, 5, 5),
 (25, 'Frank the Python', 10, 5, 5)
+
+INSERT INTO ZOOAREA (area_code, area_desc) VALUES 
+(1, 'African Safari'),
+(2, 'Jungle'),
+(3, 'Tundra'),
+(4, 'Aquarium'),
+(5, 'Reptile Kingdom')
+
+INSERT INTO ZOOFEED (feed_schedule_code, feed_schedule_desc) VALUES 
+(1, 'Twice Daily - Morning/Evening'),
+(2, 'Once Daily - Morning'),
+(3, 'Once Daily - Evening'),
+(4, 'Once Every Two Days - Morning'),
+(5, 'Once Every Two Days - Evening')
+
