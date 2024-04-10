@@ -81,3 +81,16 @@ INSERT INTO ZOOFEED (feed_schedule_code, feed_schedule_desc) VALUES
 (4, 'Once Every Two Days - Morning'),
 (5, 'Once Every Two Days - Evening')
 
+INSERT INTO ZOOCARE (caretaker_id, caretaker_first_name, caretaker_last_name, caretaker_username, 
+caretaker_posn, caretaker_salary) VALUES
+(1, 'Gabriel', 'Berres', 'berresga', 1, 45000.00),
+(2, 'Sarah', 'Berres', 'berressa', 1, 45000.00),
+(3, 'Tonya', 'Garrett', 'garretto', 2, 55000.00),
+(4, 'Aaron', 'Garrett', 'garretaa', 2, 55000.00),
+(5, 'Jason', 'Tidwell', 'tidwellja', 2, 55000.00),
+(5, 'Eden', 'Wallace', 'wallac33', 2, 55000.00),
+(6, 'Lelo', 'Bekele', 'bekelele', 3, 65000.00),
+(7, 'Travis', 'Cook', 'cooktrav', 3, 65000.00),
+(8, 'Kaden', 'Scroggins', 'scroggik', 3, 65000.00),
+(9, 'Joshua', 'Simmons', 'simmonsj', 4, 80000.00),
+(10, 'Steven', 'Hensley', 'hensleys', 5, 100000.00)
