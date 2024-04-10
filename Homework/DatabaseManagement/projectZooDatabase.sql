@@ -94,3 +94,10 @@ caretaker_posn, caretaker_salary) VALUES
 (8, 'Kaden', 'Scroggins', 'scroggik', 3, 65000.00),
 (9, 'Joshua', 'Simmons', 'simmonsj', 4, 80000.00),
 (10, 'Steven', 'Hensley', 'hensleys', 5, 100000.00)
+
+INSERT INTO ZOOPOSN (caretaker_posn, caretaker_posn_desc, caretaker_weekly_hrs, caretaker_posn_salary) VALUES
+(1, 'Caretaker I', 30, 45000.00),
+(2, 'Caretaker II', 35, 55000.00),
+(3, 'Caretaker III', 40, 65000.00),
+(4, 'Caretaker & Assistant Director', 40, 80000.00),
+(5, 'Caretaker & Director', 40, 100000.00)
