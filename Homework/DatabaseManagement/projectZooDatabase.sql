@@ -106,67 +106,121 @@ INSERT INTO ZOOPOSN (caretaker_posn, caretaker_posn_desc, caretaker_weekly_hrs, 
 
 
 
--- Queries
 USE Zoo;
 
 -- Join between two tables
-SELECT 
-	zi.animal_name name,
-	za.area_desc area
+SELECT
+    zi.animal_name name,
+    za.area_desc area
 FROM  
-	zooiden zi
-	JOIN zooarea za ON za.area_code = zi.area_code;
+    zooiden zi
+    JOIN zooarea za ON za.area_code = zi.area_code;
 
 USE Zoo;
 -- Aggregates - Group By
 USE Zoo
-SELECT 
-    zp.caretaker_posn_desc posn,
-    COUNT(*) as caretaker_count
-FROM 
-    zoocare zc
-    JOIN zooposn zp ON zp.caretaker_posn = zc.caretaker_posn
+SELECT
+	zp.caretaker_posn_desc posn,
+	COUNT(*) as caretaker_count
+FROM
+	zoocare zc
+	JOIN zooposn zp ON zp.caretaker_posn = zc.caretaker_posn
 GROUP BY
-    zp.caretaker_posn_desc;
+	zp.caretaker_posn_desc;
 
 USE Zoo
 -- Count of animals inside each area
-SELECT 
-    za.area_code,
-    za.area_desc,
-    COUNT(zi.animal_id) AS animal_count
-FROM 
-    zooiden zi
-JOIN 
-    zooarea za ON zi.area_code = za.area_code
-GROUP BY 
-    za.area_code, za.area_desc
-ORDER BY 
-    za.area_code;
+SELECT
+	za.area_code,
+	za.area_desc,
+	COUNT(zi.animal_id) AS animal_count
+FROM
+	zooiden zi
+JOIN
+	zooarea za ON zi.area_code = za.area_code
+GROUP BY
+	za.area_code, za.area_desc
+ORDER BY
+	za.area_code;
 
 -- Join operations on three tables
 USE Zoo
-SELECT 
-	zi.animal_name	animal,
-	zc.caretaker_last_name + ', ' + caretaker_first_name caretaker,
-	zf.feed_schedule_desc feeding_time
-FROM 
-	zooiden zi
-	JOIN zoocare zc ON zc.caretaker_id = zi.caretaker_id
-	JOIN zoofeed zf ON zf.feed_schedule_code = zi.feed_schedule_code;
+SELECT
+    zi.animal_name    animal,
+    zc.caretaker_last_name + ', ' + caretaker_first_name caretaker,
+    zf.feed_schedule_desc feeding_time
+FROM
+    zooiden zi
+    JOIN zoocare zc ON zc.caretaker_id = zi.caretaker_id
+    JOIN zoofeed zf ON zf.feed_schedule_code = zi.feed_schedule_code;
 
 -- Employees and their areas where they work
 USE Zoo
 SELECT DISTINCT
-    zc.caretaker_id id,
-    zc.caretaker_first_name + ' ' + zc.caretaker_last_name caretaker,
-	za.area_desc area_worked
+	zc.caretaker_id id,
+	zc.caretaker_first_name + ' ' + zc.caretaker_last_name caretaker,
+    za.area_desc area_worked
 
-FROM 
-    zoocare zc
-	JOIN zooiden zi ON zc.caretaker_id = zi.caretaker_id
-	JOIN zooarea za ON zi.area_code = za.area_code
-ORDER BY 
-    zc.caretaker_id;
-	
+FROM
+	zoocare zc
+    JOIN zooiden zi ON zc.caretaker_id = zi.caretaker_id
+    JOIN zooarea za ON zi.area_code = za.area_code
+ORDER BY
+	zc.caretaker_id;
+    
+-- Find caretakers who earn above average
+USE Zoo
+SELECT
+    caretaker_id id,
+    caretaker_first_name + ' ' + caretaker_last_name c_name,
+    caretaker_salary
+FROM
+    zoocare
+WHERE
+    caretaker_salary >
+    (
+   	 SELECT
+   		 AVG(caretaker_salary)
+   	 FROM
+   		 zoocare
+    );
 
+-- Animals cared for by the caretakers of Posn 'Caretaker I'
+USE Zoo
+SELECT
+    animal_name
+FROM
+    zooiden
+WHERE
+    caretaker_id IN
+    (
+   	 SELECT
+   		 caretaker_id
+   	 FROM
+   		 zoocare
+   	 WHERE caretaker_salary IN
+   		 (
+   			 SELECT
+   				 MIN(caretaker_salary)
+   			 FROM
+   				 zoocare)
+    );
+
+-- Caretakers whose last name starts with B
+USE Zoo
+SELECT
+    *
+FROM
+    zoocare
+WHERE
+    caretaker_last_name LIKE 'B%';
+
+
+--Animals whose name starts with char S
+USE Zoo
+SELECT
+    *
+FROM
+    zooiden
+WHERE
+    zooiden.animal_name LIKE 'S%'
