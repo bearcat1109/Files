@@ -103,3 +103,70 @@ INSERT INTO ZOOPOSN (caretaker_posn, caretaker_posn_desc, caretaker_weekly_hrs, 
 (3, 'Caretaker III', 40, 65000.00),
 (4, 'Caretaker & Assistant Director', 40, 80000.00),
 (5, 'Caretaker & Director', 40, 100000.00);
+
+
+
+-- Queries
+USE Zoo;
+
+-- Join between two tables
+SELECT 
+	zi.animal_name name,
+	za.area_desc area
+FROM  
+	zooiden zi
+	JOIN zooarea za ON za.area_code = zi.area_code;
+
+USE Zoo;
+-- Aggregates - Group By
+USE Zoo
+SELECT 
+    zp.caretaker_posn_desc posn,
+    COUNT(*) as caretaker_count
+FROM 
+    zoocare zc
+    JOIN zooposn zp ON zp.caretaker_posn = zc.caretaker_posn
+GROUP BY
+    zp.caretaker_posn_desc;
+
+USE Zoo
+-- Count of animals inside each area
+SELECT 
+    za.area_code,
+    za.area_desc,
+    COUNT(zi.animal_id) AS animal_count
+FROM 
+    zooiden zi
+JOIN 
+    zooarea za ON zi.area_code = za.area_code
+GROUP BY 
+    za.area_code, za.area_desc
+ORDER BY 
+    za.area_code;
+
+-- Join operations on three tables
+USE Zoo
+SELECT 
+	zi.animal_name	animal,
+	zc.caretaker_last_name + ', ' + caretaker_first_name caretaker,
+	zf.feed_schedule_desc feeding_time
+FROM 
+	zooiden zi
+	JOIN zoocare zc ON zc.caretaker_id = zi.caretaker_id
+	JOIN zoofeed zf ON zf.feed_schedule_code = zi.feed_schedule_code;
+
+-- Employees and their areas where they work
+USE Zoo
+SELECT DISTINCT
+    zc.caretaker_id id,
+    zc.caretaker_first_name + ' ' + zc.caretaker_last_name caretaker,
+	za.area_desc area_worked
+
+FROM 
+    zoocare zc
+	JOIN zooiden zi ON zc.caretaker_id = zi.caretaker_id
+	JOIN zooarea za ON zi.area_code = za.area_code
+ORDER BY 
+    zc.caretaker_id;
+	
+
