@@ -296,14 +296,27 @@ SELECT DISTINCT
     w_stvterm_end_date  last_day_of_attendance,
     CASE 
         WHEN
-            o_shrlgpa.shrlgpa_gpa IS NULL
+            o1_shrlgpa.shrlgpa_gpa IS NULL
         THEN
-        'Missing/Incomplete GPA Data'
+        'No SHRLGPA data matching Term and LEVL_CODE.'
         ELSE
-        (to_char(round(nvl(o_shrlgpa.shrlgpa_gpa, 0.00),
+        (to_char(round(nvl(o1_shrlgpa.shrlgpa_gpa, 0.00),
                   2),
             'fm90D00')) END AS                gpa,
-    t_shrlgpa.shrlgpa_hours_earned            transfer_credits,
+    CASE 
+        WHEN
+            t1_shrlgpa.shrlgpa_hours_earned IS NULL
+        THEN
+            'No SHRLGPA Data matching term and LEVL_CODE.'
+        ELSE
+            to_char(t1_shrlgpa.shrlgpa_hours_earned)
+    END     transfer_credits,
+    --t1_shrlgpa.shrlgpa_hours_earned            transfer_credits,
+    CASE 
+        WHEN
+            i_shrlgpa.shrlgpa_hours_attempted IS NULL
+        THEN
+            'Student '
     i_shrlgpa.shrlgpa_hours_attempted         credits_attempted,
     i_shrlgpa.shrlgpa_hours_earned            credits_earned,
     stvastd_desc                              academic_standing,
@@ -356,17 +369,44 @@ FROM
     JOIN stvmajr on stvmajr_code = w_sgbstdn_majr_code_1
     LEFT JOIN w_sfrstcr ON w_sfrstcr_pidm = g1.goradid_pidm
     -- GPA
-    JOIN shrlgpa o_shrlgpa ON o_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
-        AND o_shrlgpa.shrlgpa_levl_code = w_sgbstdn_levl_code
-        AND o_shrlgpa.shrlgpa_gpa_type_ind = 'O'
+    LEFT JOIN shrlgpa o1_shrlgpa ON o1_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
+        AND o1_shrlgpa.shrlgpa_levl_code = w_sgbstdn_levl_code
+        AND o1_shrlgpa.shrlgpa_gpa_type_ind = 'O'
+--        AND o1_shrlgpa.shrlgpa_levl_code = (
+--            SELECT
+--                MIN(o2_shrlgpa.shrlgpa_levl_code)
+--            FROM
+--                shrlgpa o2_shrlgpa
+--            WHERE
+--                o2_shrlgpa.shrlgpa_pidm = o_shrlgpa_pidm
+--                AND o2.shrlgpa_gpa_type_ind = 'O'
+--        )
     -- Xfer hours
-    LEFT JOIN shrlgpa t_shrlgpa ON t_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
-        AND t_shrlgpa.shrlgpa_levl_code = w_sgbstdn_levl_code
-        AND t_shrlgpa.shrlgpa_gpa_type_ind = 'T'
+    LEFT JOIN shrlgpa t1_shrlgpa ON t1_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
+        AND t1_shrlgpa.shrlgpa_levl_code = w_sgbstdn_levl_code
+        AND t1_shrlgpa.shrlgpa_gpa_type_ind = 'T'
+--        AND t1_shrlgpa.shrlgpa_levl_code = (
+--            SELECT
+--                MIN(t2_shrlgpa.shrlgpa_levl_code)
+--            FROM
+--                shrlgpa t2_shrlgpa
+--            WHERE
+--                t2_shrlgpa.shrlgpa_pidm = t1_shrlgpa_pidm
+--                AND t2_shrlgpa.shrlgpa_gpa_type_ind = 'T'
+--        )   
     -- Inst hours
-    JOIN shrlgpa i_shrlgpa ON i_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
+    LEFT JOIN shrlgpa i_shrlgpa ON i_shrlgpa.shrlgpa_pidm = g1.goradid_pidm
         AND i_shrlgpa.shrlgpa_levl_code = w_sgbstdn_levl_code
         AND i_shrlgpa.shrlgpa_gpa_type_ind = 'I'
+--        AND i1_shrlgpa.shrlgpa_levl_code = (
+--            SELECT
+--                MIN(i2_shrlgpa.shrlgpa_levl_code)
+--            FROM
+--                shrlgpa i2_shrlgpa
+--            WHERE
+--                i2_shrlgpa.shrlgpa_pidm = i1_shrlgpa_pidm
+--                AND i2_shrlgpa.shrlgpa_gpa_type_ind = 'T'
+--        ) 
     -- Term Hours
     LEFT JOIN shrtgpa ON shrtgpa_pidm = g1.goradid_pidm
         AND shrtgpa_term_code = w_sfrstcr_term_code
