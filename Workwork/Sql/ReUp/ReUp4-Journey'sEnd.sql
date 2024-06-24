@@ -294,29 +294,25 @@ SELECT DISTINCT
             'Other / Zero Enrolled Hours'
     END AS full_time_or_part_time_status,
     w_stvterm_end_date  last_day_of_attendance,
-    CASE 
-        WHEN
-            o1_shrlgpa.shrlgpa_gpa IS NULL
-        THEN
-        'No SHRLGPA data matching Term and LEVL_CODE.'
-        ELSE
-        (to_char(round(nvl(o1_shrlgpa.shrlgpa_gpa, 0.00),
-                  2),
-            'fm90D00')) END AS                gpa,
-    CASE 
-        WHEN
-            t1_shrlgpa.shrlgpa_hours_earned IS NULL
-        THEN
-            'No SHRLGPA Data matching term and LEVL_CODE.'
-        ELSE
-            to_char(t1_shrlgpa.shrlgpa_hours_earned)
-    END     transfer_credits,
-    --t1_shrlgpa.shrlgpa_hours_earned            transfer_credits,
-    CASE 
-        WHEN
-            i_shrlgpa.shrlgpa_hours_attempted IS NULL
-        THEN
-            'Student '
+--    CASE 
+--        WHEN
+--            o1_shrlgpa.shrlgpa_gpa IS NULL
+--        THEN
+--        'No SHRLGPA data matching Term and LEVL_CODE.'
+--        ELSE
+--        (to_char(round(nvl(o1_shrlgpa.shrlgpa_gpa, 0.00),
+--                  2),
+--            'fm90D00')) END AS                gpa,
+    (to_char(round(nvl(o1_shrlgpa.shrlgpa_gpa, 0.00), 2), 'fm90D00')) gpa,
+--    CASE 
+--        WHEN
+--            t1_shrlgpa.shrlgpa_hours_earned IS NULL
+--        THEN
+--            'No SHRLGPA Data matching term and LEVL_CODE.'
+--        ELSE
+--            to_char(t1_shrlgpa.shrlgpa_hours_earned)
+--    END     transfer_credits,
+    t1_shrlgpa.shrlgpa_hours_earned            transfer_credits,
     i_shrlgpa.shrlgpa_hours_attempted         credits_attempted,
     i_shrlgpa.shrlgpa_hours_earned            credits_earned,
     stvastd_desc                              academic_standing,
